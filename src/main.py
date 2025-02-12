@@ -11,12 +11,10 @@ from utils.log_info import LogInfo
 if TYPE_CHECKING:
     from configparser import ConfigParser
 
-    from aiwolf_nlp_common.client import Client
-
 from time import sleep
 
-from aiwolf_nlp_common import Action
-from aiwolf_nlp_common.client.websocket import WebSocketClient
+from aiwolf_nlp_common.action import Action
+from aiwolf_nlp_common.client.client import Client
 
 import player
 import utils
@@ -34,8 +32,9 @@ def run_agent(
     config: ConfigParser,
     log_info: LogInfo,
 ) -> None:
-    client: Client = WebSocketClient(
+    client: Client = Client(
         url=config.get("websocket", "url"),
+        token=config.get("websocket", "token"),
     )
     name = config.get("agent", f"name{idx}")
     while True:
