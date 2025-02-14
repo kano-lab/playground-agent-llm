@@ -12,8 +12,15 @@ from player.werewolf import Werewolf
 def set_role(
     prev_agent: Agent,
 ) -> Agent:
+    role: Role | None = None
+    if (
+        prev_agent.info is not None
+        and prev_agent.info.agent is not None
+        and prev_agent.info.role_map is not None
+    ):
+        role = prev_agent.info.role_map.get(prev_agent.info.agent)
     agent: Agent
-    match prev_agent.role:
+    match role:
         case Role.VILLAGER:
             agent = Villager()
         case Role.WEREWOLF:

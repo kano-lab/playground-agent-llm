@@ -14,7 +14,7 @@ import random
 from threading import Thread
 from typing import Callable
 
-from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
+from aiwolf_nlp_common.packet import Info, Packet, Request, Setting, Status, Talk
 
 
 class Agent:
@@ -25,7 +25,6 @@ class Agent:
         team_name: str | None = None,
         agent_log: AgentLog | None = None,
     ) -> None:
-        self.role: Role | None = None
         self.team_name: str = team_name if team_name is not None else ""
         self.idx: int = -1
 
@@ -59,8 +58,14 @@ class Agent:
 
             thread = Thread(target=execute_with_timeout, daemon=True)
             thread.start()
-            if self.action_timeout > 0:
-                thread.join(timeout=self.action_timeout)
+
+            timeout_value = (
+                self.info.action_timeout
+                if self.info is not None and hasattr(self.info, "action_timeout")
+                else 0
+            )
+            if timeout_value > 0:
+                thread.join(timeout=timeout_value)
             else:
                 thread.join()
 
@@ -85,9 +90,9 @@ class Agent:
         if packet is None:
             return
         self.request = packet.request
-        if self.info is not None and packet.info is not None:
+        if packet.info is not None:
             self.info = packet.info
-        if self.setting is not None and packet.setting is not None:
+        if packet.setting is not None:
             self.setting = packet.setting
         if packet.talk_history is not None:
             self.talk_history.extend(packet.talk_history)
