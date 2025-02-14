@@ -18,6 +18,7 @@ from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Statu
 
 
 class Agent:
+
     def __init__(
         self,
         config: configparser.ConfigParser | None = None,
@@ -31,8 +32,8 @@ class Agent:
         self.request: Request | None = None
         self.info: Info | None = None
         self.setting: Setting | None = None
-        self.talk_history: list[Talk] | None = None
-        self.whisper_history: list[Talk] | None = None
+        self.talk_history: list[Talk] = []
+        self.whisper_history: list[Talk] = []
 
         self.agent_log = agent_log
 
@@ -80,7 +81,7 @@ class Agent:
 
         return _wrapper
 
-    def set_packet(self, packet: Packet) -> None:  # noqa: C901
+    def set_packet(self, packet: Packet) -> None:
         if packet is None:
             return
         self.request = packet.request
@@ -88,16 +89,10 @@ class Agent:
             self.info = packet.info
         if self.setting is not None and packet.setting is not None:
             self.setting = packet.setting
-        if self.talk_history is not None and packet.talk_history is not None:
-            if self.talk_history is None:
-                self.talk_history = packet.talk_history
-            else:
-                self.talk_history.extend(packet.talk_history)
-        if self.whisper_history is not None and packet.whisper_history is not None:
-            if self.whisper_history is None:
-                self.whisper_history = packet.whisper_history
-            else:
-                self.whisper_history.extend(packet.whisper_history)
+        if packet.talk_history is not None:
+            self.talk_history.extend(packet.talk_history)
+        if packet.whisper_history is not None:
+            self.whisper_history.extend(packet.whisper_history)
 
         if self.request == Request.INITIALIZE:
             if self.info is None:
