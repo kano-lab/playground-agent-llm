@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 
 from time import sleep
 
-from aiwolf_nlp_common.action import Action
-from aiwolf_nlp_common.client.client import Client
+from aiwolf_nlp_common.client import Client
+from aiwolf_nlp_common.packet import Request
 
 import player
 import utils
@@ -34,7 +34,11 @@ def run_agent(
 ) -> None:
     client: Client = Client(
         url=config.get("websocket", "url"),
-        token=config.get("websocket", "token"),
+        token=(
+            config.get("websocket", "token")
+            if config.has_option("websocket", "token")
+            else None
+        ),
     )
     name = config.get("agent", f"name{idx}")
     while True:
@@ -50,22 +54,17 @@ def run_agent(
 
     agent = player.agent.Agent(
         config=config,
-        name=name,
+        team_name=name,
         agent_log=AgentLog(config=config, agent_name=name, log_info=log_info),
     )
-    while agent.running:
-        if len(agent.received) == 0:
-            receive = client.receive()
-            if isinstance(receive, (str, list)):
-                agent.append_recv(recv=receive)
-        agent.set_packet()
+    while agent.request != Request.FINISH:
+        packet = client.receive()
+        agent.set_packet(packet)
         req = agent.action()
-        if agent.packet is None:
-            continue
-        if Action.is_initialize(request=agent.packet.request):
+        if agent.request == Request.INITIALIZE:
             agent = utils.agent_util.set_role(prev_agent=agent)
-        if req != "":
-            client.send(req=req)
+        if req is not None:
+            client.send(req)
 
     client.close()
     logger.info("エージェント %s とゲームサーバの接続を切断しました", name)
