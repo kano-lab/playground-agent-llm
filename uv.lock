@@ -10,18 +10,18 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "aiwolf-nlp-common", specifier = "==0.4.5" }]
+requires-dist = [{ name = "aiwolf-nlp-common", specifier = "==0.4.6" }]
 
 [[package]]
 name = "aiwolf-nlp-common"
-version = "0.4.5"
+version = "0.4.6"
 source = { registry = "https://test.pypi.org/simple/" }
 dependencies = [
     { name = "websocket-client" },
 ]
-sdist = { url = "https://test-files.pythonhosted.org/packages/8f/56/fdd5edc5a9cc3322a09f1878db9480bacc8fcda51012ee393c6b8b6b315d/aiwolf_nlp_common-0.4.5.tar.gz", hash = "sha256:c444c817e1d58665e9ed224f05dd7e44108bb963a329ab2298f79f6e393898af", size = 38501 }
+sdist = { url = "https://test-files.pythonhosted.org/packages/0c/45/a2195bed60d5431f9f4d564727c70db2921b279d487d209621e581e5e754/aiwolf_nlp_common-0.4.6.tar.gz", hash = "sha256:b254b9358e6e689e0b4b695a7316a055d678bfa07eac69610025cbaff821a295", size = 38499 }
 wheels = [
-    { url = "https://test-files.pythonhosted.org/packages/87/01/94391d339a9521b1deb35c022a34a5952558d65aa1638f4d6e15a333643c/aiwolf_nlp_common-0.4.5-py3-none-any.whl", hash = "sha256:fd4b47ddf7b9ba5d90b88412774d0c993ebfe114aecab3d0249894cd4d98df3d", size = 9833 },
+    { url = "https://test-files.pythonhosted.org/packages/13/eb/0483cc6ad1219778dd4ad3e97383470106e08369b9c7eebca32d4891a045/aiwolf_nlp_common-0.4.6-py3-none-any.whl", hash = "sha256:ffecf79cff7a918fce473ea62887337364609e9e2a310beddd21f4584f161643", size = 9827 },
 ]
 
 [[package]]
