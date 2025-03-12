@@ -1,0 +1,12 @@
+[websocket]
+url = ws://127.0.0.1:8080/ws
+token = 
+auto_reconnect = false
+
+[agent]
+num = 5
+team = kanolab
+
+[path]
+log_config = ./config/log.ini
+random_talk = ./resource/2019071_44011_AIWolfTalkLogs.txt
