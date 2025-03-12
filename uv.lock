@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.11"
 
 [[package]]
@@ -10,25 +11,25 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "aiwolf-nlp-common", specifier = "==0.4.8" }]
+requires-dist = [{ name = "aiwolf-nlp-common", specifier = "==0.5.0" }]
 
 [[package]]
 name = "aiwolf-nlp-common"
-version = "0.4.8"
-source = { registry = "https://test.pypi.org/simple/" }
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "websocket-client" },
 ]
-sdist = { url = "https://test-files.pythonhosted.org/packages/ca/d0/0c364cf2b07f20cf8e12cc9af1d89487853240f6658db941d315c594c594/aiwolf_nlp_common-0.4.8.tar.gz", hash = "sha256:d9c7329cdc54908818506f020fc61a46bd0522eef1b1025fda662cb54f96e8d5", size = 40882 }
+sdist = { url = "https://files.pythonhosted.org/packages/69/d1/f96c5c288195f003cbce06dbbe5cdc1559c96e2e37c9ccd9e3e5531fd5dc/aiwolf_nlp_common-0.5.0.tar.gz", hash = "sha256:de052ea281bea112f8feeca17180d7711f9da23793263d02fc5bd3be56364b44", size = 40656 }
 wheels = [
-    { url = "https://test-files.pythonhosted.org/packages/8b/52/1347292220286734021557141974840704e97fe0eec843158fc5bca7419c/aiwolf_nlp_common-0.4.8-py3-none-any.whl", hash = "sha256:618f59f1d77e684d10eed8cb90830e1f56968372dad4d9cd35efc2e3ebcf918a", size = 12390 },
+    { url = "https://files.pythonhosted.org/packages/ec/25/30e4af9042ac737b7223b7a131cfe606188a74555383c67b4439ae19fc09/aiwolf_nlp_common-0.5.0-py3-none-any.whl", hash = "sha256:54d413ad2b1018515fa2fce5f64e5ca3b47ee976602bd0010cf11e302aaf7c29", size = 12281 },
 ]
 
 [[package]]
 name = "websocket-client"
 version = "1.8.0"
-source = { registry = "https://test.pypi.org/simple/" }
-sdist = { url = "https://test-files.pythonhosted.org/packages/e6/30/fba0d96b4b5fbf5948ed3f4681f7da2f9f64512e1d303f94b4cc174c24a5/websocket_client-1.8.0.tar.gz", hash = "sha256:3239df9f44da632f96012472805d40a23281a991027ce11d2f45a6f24ac4c3da", size = 54648 }
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/30/fba0d96b4b5fbf5948ed3f4681f7da2f9f64512e1d303f94b4cc174c24a5/websocket_client-1.8.0.tar.gz", hash = "sha256:3239df9f44da632f96012472805d40a23281a991027ce11d2f45a6f24ac4c3da", size = 54648 }
 wheels = [
-    { url = "https://test-files.pythonhosted.org/packages/5a/84/44687a29792a70e111c5c477230a72c4b957d88d16141199bf9acb7537a3/websocket_client-1.8.0-py3-none-any.whl", hash = "sha256:17b44cc997f5c498e809b22cdf2d9c7a9e71c02c8cc2b6c56e7c2d1239bfa526", size = 58826 },
+    { url = "https://files.pythonhosted.org/packages/5a/84/44687a29792a70e111c5c477230a72c4b957d88d16141199bf9acb7537a3/websocket_client-1.8.0-py3-none-any.whl", hash = "sha256:17b44cc997f5c498e809b22cdf2d9c7a9e71c02c8cc2b6c56e7c2d1239bfa526", size = 58826 },
 ]

@@ -8,22 +8,7 @@
 大会参加者はエージェントを実装したうえで、ご自身の端末でエージェントを実行、大会運営が提供するゲームサーバに接続する必要があります。エージェントの実装については、実装言語を含め、制限はありません。  
 自己対戦では、5体のエージェントをご自身の端末で実行し、大会運営が提供する自己対戦用のゲームサーバに接続しすることで、エージェント同士の対戦を行うことができます。
 
-**全エージェント共通の動作**  
-`player/agent.py` が呼び出されます。  
-`talk`関数: エージェントが発話する内容を返す関数です。  
-`vote`関数: エージェントが投票するプレイヤーを返す関数です。
-
-**役職別の動作**  
-- 村人: `player/villager.py` が呼び出されます。`talk`,`vote`関数をカスタマイズしてください
-- 占い師: `player/seer.py` が呼び出されます。`divine`関数や`talk`,`vote`関数をカスタマイズしてください。
-- 狂人: `player/possessed.py` が呼び出されます。`talk`,`vote`関数をカスタマイズしてください。
-- 人狼: `player/werewolf.py` が呼び出されます。`attack`関数や`talk`,`vote`関数をカスタマイズしてください。
-
 ## 環境構築
-
-> [!IMPORTANT]
-> ライブラリのリファクタリングなどに伴い、コードの修正、破壊的変更を行いました。この対応により、現在のコードでは型エラーなどの警告の殆どを修正しました。  
-> リファクタリング前のコードは、[v0.1.0](https://github.com/kano-lab/aiwolf-nlp-agent/tree/v0.1.0)をご参照ください。aiwolf-nlp-commonのバージョンはv0.2.2以下をご利用ください。
 
 > [!IMPORTANT]
 > Python 3.11以上が必要です。
@@ -34,7 +19,6 @@ cd aiwolf-nlp-agent
 python -m venv .venv
 source .venv/bin/activate
 pip install .
-cd src
 ```
 
 > [!NOTE]
@@ -49,26 +33,9 @@ cd src
 [kano-lab/aiwolf-nlp-server](https://github.com/kano-lab/aiwolf-nlp-server) を参考にしてください。
 
 ```
-cp res/config.ini.example res/config.ini
-cp res/log.ini.example res/log.ini
-python multi.py
-```
-
-### 主催者が提供するサーバでの自己対戦の実行
-
-`res/config.ini` を主催者から提供された設定に変更してください。  
-
-```
-python multi.py
-```
-
-### 主催者が提供するサーバでの本戦の実行
-
-`res/config.ini` を主催者から提供された設定に変更してください。  
-
-```
-chmod +x infinite.sh
-./infinite.sh
+cp config/config.ini.example config/config.ini
+cp config/log.ini.example config/log.ini
+python src/main.py
 ```
 
 ## 設定 (config.ini)
@@ -76,42 +43,13 @@ chmod +x infinite.sh
 ### [websocket]
 
 `url`: ゲームサーバのURLです。ローカル内のゲームサーバに接続する場合はデフォルト値で問題ありません。
-
-### [connection]
-
-`keep_connection`: game.num回のゲームを行ったあとにもう一度ゲームを行う場合は`true`にしてください。**本戦のみ`true`にしてください。**
-
-### [game]
-
-`num`: 連続でゲームを行う回数です。自己対戦の場合はデフォルト値で問題ありません。
+`token`: ゲームサーバに接続するためのトークンです。大会運営から提供されるトークンを設定してください。
+`auto_reconnect`: 対戦終了後に自動で再接続するかどうかの設定です。
 
 ### [agent]
 
 `num`: 起動するエージェントの数です。自己対戦の場合はデフォルト値で問題ありません。  
-`name*`: *番目のエージェントの名前です。基本的には参加登録時に登録した名前+数字で問題ありません。
-
-```
-[websocket]
-url = ws://127.0.0.1:8080/ws
-
-[connection]
-keep_connection = false
-
-[game]
-num = 1
-
-[agent]
-num = 5
-name1 = kanolab1
-name2 = kanolab2
-name3 = kanolab3
-name4 = kanolab4
-name5 = kanolab5
-
-[path]
-log_config = ./res/log.ini
-random_talk = ./res/2019071_44011_AIWolfTalkLogs.txt
-```
+`team`: エージェントのチーム名です。大会運営から提供されるチーム名を設定してください。
 
 ## ログの設定 (log.ini)
 

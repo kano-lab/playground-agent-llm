@@ -6,7 +6,7 @@ license = { file = "LICENSE" }
 requires-python = ">=3.11"
 readme = "README.md"
 dependencies = [
-    "aiwolf-nlp-common==0.4.8",
+    "aiwolf-nlp-common==0.5.0",
 ]
 
 authors = [
