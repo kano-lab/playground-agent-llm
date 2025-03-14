@@ -13,10 +13,7 @@ class Seer(Agent):
 
     @Agent.timeout
     def talk(self) -> str:
-        comment = random.choice(self.comments)  # noqa: S311
-        if self.agent_log is not None:
-            self.agent_log.talk(comment=comment)
-        return comment
+        return random.choice(self.comments)  # noqa: S311
 
     @Agent.timeout
     @Agent.send_agent_index
@@ -24,8 +21,6 @@ class Seer(Agent):
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
-        if self.agent_log is not None:
-            self.agent_log.vote(vote_target=target)
         return target
 
     @Agent.timeout
@@ -34,8 +29,6 @@ class Seer(Agent):
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
-        if self.agent_log is not None:
-            self.agent_log.divine(divine_target=target)
         return target
 
     def initialize(self) -> None:

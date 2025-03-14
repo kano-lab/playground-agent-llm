@@ -8,5 +8,18 @@ num = 5
 team = kanolab
 
 [path]
-log_config = ./config/log.ini
 random_talk = ./resource/2019071_44011_AIWolfTalkLogs.txt
+
+[log]
+output_dir = ./log
+name = false
+initialize = false
+daily_initialize = false
+whisper = true
+talk = true
+daily_finish = false
+divine = true
+guard = true
+vote = true
+attack = true
+finish = false

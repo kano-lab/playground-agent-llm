@@ -8,8 +8,6 @@ from utils import agent_util
 if TYPE_CHECKING:
     import configparser
 
-    from utils.agent_log import AgentLog
-
 import random
 from threading import Thread
 from typing import Callable
@@ -18,23 +16,19 @@ from aiwolf_nlp_common.packet import Info, Packet, Request, Setting, Status, Tal
 
 
 class Agent:
-
     def __init__(
         self,
         config: configparser.ConfigParser | None = None,
-        team_name: str | None = None,
-        agent_log: AgentLog | None = None,
+        name: str | None = None,
     ) -> None:
-        self.team_name: str = team_name if team_name is not None else ""
-        self.idx: int = -1
+        self.agent_name: str = name if name is not None else ""
+        self.idx = -1
 
         self.request: Request | None = None
         self.info: Info | None = None
         self.setting: Setting | None = None
         self.talk_history: list[Talk] = []
         self.whisper_history: list[Talk] = []
-
-        self.agent_log = agent_log
 
         self.comments: list[str] = []
         if config is not None:
@@ -116,22 +110,15 @@ class Agent:
 
     @timeout
     def name(self) -> str:
-        return self.team_name
+        return self.agent_name
 
     @timeout
     def talk(self) -> str:
-        comment = random.choice(self.comments)  # noqa: S311
-        if self.agent_log is not None:
-            self.agent_log.talk(comment=comment)
-        return comment
+        return random.choice(self.comments)  # noqa: S311
 
     @timeout
     def whisper(self) -> str:
-        comment = random.choice(self.comments)  # noqa: S311
-        if self.agent_log is not None:
-            # :TODO implement whisper log
-            self.agent_log.talk(comment=comment)
-        return comment
+        return random.choice(self.comments)  # noqa: S311
 
     @timeout
     @send_agent_index
@@ -139,8 +126,6 @@ class Agent:
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
-        if self.agent_log is not None:
-            self.agent_log.vote(vote_target=target)
         return target
 
     @timeout
@@ -149,8 +134,6 @@ class Agent:
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
-        if self.agent_log is not None:
-            self.agent_log.divine(divine_target=target)
         return target
 
     @timeout
@@ -159,9 +142,6 @@ class Agent:
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
-        if self.agent_log is not None:
-            self.agent_log.divine(guard_target=target)
-            # :TODO implement guard log
         return target
 
     @timeout
@@ -170,8 +150,6 @@ class Agent:
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
-        if self.agent_log is not None:
-            self.agent_log.attack(attack_target=target)
         return target
 
     def initialize(self) -> None:
@@ -210,13 +188,11 @@ class Agent:
                 self.daily_finish()
             case Request.FINISH:
                 self.finish()
-                if self.agent_log is not None and self.agent_log.is_write:
-                    self.agent_log.close()
         return None
 
     def transfer_state(self, prev_agent: Agent) -> None:
         self.role = prev_agent.role
-        self.team_name = prev_agent.team_name
+        self.agent_name = prev_agent.agent_name
         self.idx = prev_agent.idx
 
         self.request = prev_agent.request
@@ -224,7 +200,5 @@ class Agent:
         self.setting = prev_agent.setting
         self.talk_history = prev_agent.talk_history
         self.whisper_history = prev_agent.whisper_history
-
-        self.agent_log = prev_agent.agent_log
 
         self.comments = prev_agent.comments
