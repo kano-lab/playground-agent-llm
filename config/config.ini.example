@@ -11,7 +11,11 @@ team = kanolab
 random_talk = ./resource/2019071_44011_AIWolfTalkLogs.txt
 
 [log]
+console_output = true
+file_output = true
 output_dir = ./log
+level = info
+
 name = false
 initialize = false
 daily_initialize = false

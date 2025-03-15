@@ -7,10 +7,10 @@ from utils import agent_util
 
 if TYPE_CHECKING:
     import configparser
+    from collections.abc import Callable
 
 import random
 from threading import Thread
-from typing import Callable
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Setting, Status, Talk
 

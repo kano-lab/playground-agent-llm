@@ -51,6 +51,7 @@ def connect(idx: int, config: ConfigParser) -> None:
     agent_logger = AgentLogger(config=config, name=name)
     while agent.request != Request.FINISH:
         packet = client.receive()
+        agent_logger.logger.debug(packet)
         agent.set_packet(packet)
         req = agent.action()
         if agent.request == Request.INITIALIZE:
@@ -58,7 +59,7 @@ def connect(idx: int, config: ConfigParser) -> None:
             if agent.info is not None:
                 agent_logger.set_game_id(game_id=agent.info.game_id)
         if agent.request is not None:
-            agent_logger.info(agent.request, req)
+            agent_logger.packet(agent.request, req)
             if req is not None:
                 client.send(req)
 
