@@ -170,9 +170,9 @@ class Agent:
             ]
         )}
         """
-        sleep(10)
+        sleep(3)
         self.sent_whisper_count = len(self.whisper_history)
-        return self.chat.send_message(message).text or ""
+        return (self.chat.send_message(message).text or "").strip()
 
     @timeout
     def talk(self) -> str:
@@ -189,9 +189,9 @@ class Agent:
             ]
         )}
         """
-        sleep(10)
+        sleep(3)
         self.sent_talk_count = len(self.talk_history)
-        return self.chat.send_message(message).text or ""
+        return (self.chat.send_message(message).text or "").strip()
 
     def daily_finish(self) -> None:
         """昼終了リクエストに対する処理を行う."""
@@ -209,7 +209,7 @@ class Agent:
         対象:
         {"\n".join(self.get_alive_agents())}
         """
-        sleep(10)
+        sleep(3)
         return agent_util.agent_name_to_idx(
             self.chat.send_message(message).text
             or random.choice(  # noqa: S311
@@ -230,7 +230,7 @@ class Agent:
         対象:
         {"\n".join(self.get_alive_agents())}
         """
-        sleep(10)
+        sleep(3)
         return agent_util.agent_name_to_idx(
             self.chat.send_message(message).text
             or random.choice(  # noqa: S311
@@ -251,7 +251,7 @@ class Agent:
         対象:
         {"\n".join(self.get_alive_agents())}
         """
-        sleep(10)
+        sleep(3)
         return agent_util.agent_name_to_idx(
             self.chat.send_message(message).text
             or random.choice(  # noqa: S311
@@ -272,7 +272,7 @@ class Agent:
         対象:
         {"\n".join(self.get_alive_agents())}
         """
-        sleep(10)
+        sleep(3)
         return agent_util.agent_name_to_idx(
             self.chat.send_message(message).text
             or random.choice(  # noqa: S311
