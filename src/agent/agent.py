@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from utils import agent_util
@@ -15,7 +16,7 @@ from threading import Thread
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
 from google import genai
-from google.genai.types import ModelContent, Part, UserContent
+from google.genai.types import Part, UserContent
 
 
 class Agent:
@@ -36,6 +37,14 @@ class Agent:
         self.whisper_history: list[Talk] = []
         self.idx: int = -1
         self.role: Role | None = None
+
+        self.comments: list[str] = []
+        if self.config is not None:
+            with Path.open(
+                Path(self.config.get("path", "random_talk")),
+                encoding="utf-8",
+            ) as f:
+                self.comments = f.read().splitlines()
 
     @staticmethod
     def timeout(func: Callable) -> Callable:
@@ -98,6 +107,8 @@ class Agent:
             self.whisper_history.extend(packet.whisper_history)
 
         if self.request == Request.INITIALIZE:
+            self.talk_history: list[Talk] = []
+            self.whisper_history: list[Talk] = []
             if self.info is None:
                 return
             if self.info.agent is None or self.info.role_map is None:
@@ -120,21 +131,18 @@ class Agent:
 
     def initialize(self) -> None:
         """ゲーム開始リクエストに対する初期化処理を行う."""
-        self.request: Request | None = None
-        self.info: Info | None = None
-        self.setting: Setting | None = None
-        self.talk_history: list[Talk] = []
-        self.whisper_history: list[Talk] = []
-        self.idx = -1
-        self.role = None
-        if self.config is None:
-            raise ValueError(self.config, "Config not found")
+        if self.config is None or self.info is None:
+            return
         self.client = genai.Client(api_key=self.config.get("gemini", "api_key"))
         self.chat = self.client.chats.create(
             model="gemini-2.0-flash-001",
             history=[
                 UserContent(
-                    parts=[Part(text=f"あなたは人狼ゲームのエージェントです。あなたの名前は{self.info.}")],
+                    parts=[
+                        Part(
+                            text=f"あなたは人狼ゲームのエージェントです。あなたの名前は{self.info.agent}です。あなたの役職は{self.role}です。",
+                        ),
+                    ],
                 ),
             ],
         )
