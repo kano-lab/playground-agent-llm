@@ -9,6 +9,7 @@ team = kanolab
 
 [gemini]
 api_key = PASTE_KEY_HERE
+model = gemini-2.0-flash-lite
 
 [log]
 console_output = true
