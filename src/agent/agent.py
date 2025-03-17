@@ -241,7 +241,7 @@ class Agent:
             case Request.VOTE:
                 return self.vote()
             case Request.DIVINE:
-                return self.name()
+                return self.divine()
             case Request.GUARD:
                 return self.guard()
             case Request.ATTACK:
