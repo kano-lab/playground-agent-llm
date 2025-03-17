@@ -12,7 +12,7 @@ from agent.seer import Seer
 from agent.villager import Villager
 from agent.werewolf import Werewolf
 
-ROLE_TO_AGENT_CLS = {
+ROLE_TO_AGENT_CLS: dict[Role, type[Agent]] = {
     Role.WEREWOLF: Werewolf,
     Role.POSSESSED: Possessed,
     Role.SEER: Seer,
@@ -35,17 +35,8 @@ def agent_idx_to_agent(idx: int) -> str:
     return f"Agent[{idx:0>2d}]"
 
 
-def set_role(prev_agent: Agent) -> Agent:
+def set_role(prev_agent: Agent, role: Role) -> Agent:
     """エージェントの役職に応じたエージェントを設定する."""
-    role: Role | None = None
-    if (
-        prev_agent.info is not None
-        and prev_agent.info.agent is not None
-        and prev_agent.info.role_map is not None
-    ):
-        role = prev_agent.info.role_map.get(prev_agent.info.agent)
-    if role is None:
-        raise ValueError(prev_agent.info, "Role not found")
     if role not in ROLE_TO_AGENT_CLS:
         raise ValueError(prev_agent.role, "Unknown role")
     agent = ROLE_TO_AGENT_CLS[role]()

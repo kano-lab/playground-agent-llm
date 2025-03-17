@@ -18,7 +18,7 @@ from aiwolf_nlp_common.client import Client
 from aiwolf_nlp_common.packet import Request
 
 
-def connect(idx: int, config: ConfigParser) -> None:
+def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901
     """エージェントを起動する."""
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
@@ -30,7 +30,7 @@ def connect(idx: int, config: ConfigParser) -> None:
     logger.addHandler(console_handler)
 
     while True:
-        client: Client = Client(
+        client = Client(
             url=config.get("websocket", "url"),
             token=(
                 config.get("websocket", "token")
@@ -55,19 +55,27 @@ def connect(idx: int, config: ConfigParser) -> None:
 
         agent = Agent(config=config, name=name)
         agent_logger = AgentLogger(config=config, name=name)
-        while agent.request != Request.FINISH:
+        while True:
             packet = client.receive()
             agent_logger.logger.debug(packet)
+            if packet.request == Request.INITIALIZE:
+                if packet.info is None:
+                    raise ValueError(packet.info, "Info not found")
+                agent_logger.set_game_id(game_id=packet.info.game_id)
+                if packet.info.agent is None or packet.info.role_map is None:
+                    raise ValueError(packet.info, "Agent or role_map not found")
+                role = packet.info.role_map.get(packet.info.agent)
+                if role is None:
+                    raise ValueError(packet.info, "Role not found")
+                agent = utils.agent_util.set_role(prev_agent=agent, role=role)
             agent.set_packet(packet)
             req = agent.action()
-            if agent.request == Request.INITIALIZE:
-                agent = utils.agent_util.set_role(prev_agent=agent)
-                if agent.info is not None:
-                    agent_logger.set_game_id(game_id=agent.info.game_id)
             if agent.request is not None:
                 agent_logger.packet(agent.request, req)
                 if req is not None:
                     client.send(req)
+            if packet.request == Request.FINISH:
+                break
 
         client.close()
         logger.info("エージェント %s とゲームサーバの接続を切断しました", name)
