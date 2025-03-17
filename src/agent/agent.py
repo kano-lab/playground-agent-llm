@@ -36,6 +36,14 @@ class Agent:
         self.idx: int = -1
         self.role: Role | None = None
 
+        self.comments: list[str] = []
+        if self.config is not None:
+            with Path.open(
+                Path(self.config.get("path", "random_talk")),
+                encoding="utf-8",
+            ) as f:
+                self.comments = f.read().splitlines()
+
     @staticmethod
     def timeout(func: Callable) -> Callable:
         """アクションタイムアウトを設定するデコレータ."""
@@ -97,6 +105,8 @@ class Agent:
             self.whisper_history.extend(packet.whisper_history)
 
         if self.request == Request.INITIALIZE:
+            self.talk_history: list[Talk] = []
+            self.whisper_history: list[Talk] = []
             if self.info is None:
                 return
             if self.info.agent is None or self.info.role_map is None:
@@ -119,21 +129,6 @@ class Agent:
 
     def initialize(self) -> None:
         """ゲーム開始リクエストに対する初期化処理を行う."""
-        self.request: Request | None = None
-        self.info: Info | None = None
-        self.setting: Setting | None = None
-        self.talk_history: list[Talk] = []
-        self.whisper_history: list[Talk] = []
-        self.idx = -1
-        self.role = None
-
-        self.comments: list[str] = []
-        if self.config is not None:
-            with Path.open(
-                Path(self.config.get("path", "random_talk")),
-                encoding="utf-8",
-            ) as f:
-                self.comments = f.read().splitlines()
 
     def daily_initialize(self) -> None:
         """昼開始リクエストに対する処理を行う."""
