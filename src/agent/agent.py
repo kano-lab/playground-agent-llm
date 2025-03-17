@@ -31,7 +31,7 @@ class Agent:
         """エージェントの初期化を行う."""
         self.config = config
         self.agent_name: str = name if name is not None else ""
-        self.agent_logger: AgentLogger | None = None
+        self.agent_logger: AgentLogger | None = logger
         self.request: Request | None = None
         self.info: Info | None = None
         self.setting: Setting | None = None
