@@ -1,3 +1,5 @@
+"""エージェントのログを出力するクラスを定義するモジュール."""
+
 from __future__ import annotations
 
 import logging
@@ -11,11 +13,14 @@ if TYPE_CHECKING:
 
 
 class AgentLogger:
+    """エージェントのログを出力するクラス."""
+
     def __init__(
         self,
         config: configparser.ConfigParser,
         name: str,
     ) -> None:
+        """エージェントのログを初期化する."""
         self.config = config
         self.name = name
         self.logger = logging.getLogger(name)
@@ -31,6 +36,7 @@ class AgentLogger:
             self.logger.addHandler(handler)
 
     def set_game_id(self, game_id: str) -> None:
+        """ゲームのIDを設定する."""
         if self.config.getboolean("log", "file_output"):
             output_dir = Path(self.config.get("log", "output_dir")) / game_id
             output_dir.mkdir(
@@ -49,6 +55,7 @@ class AgentLogger:
             self.logger.addHandler(handler)
 
     def packet(self, req: Request, res: str | None) -> None:
+        """パケットのログを出力."""
         if not self.config.has_option("log", req.lower()):
             return
         if not self.config.getboolean("log", req.lower()):

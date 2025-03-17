@@ -1,3 +1,5 @@
+"""エージェントの基底クラスを定義するモジュール."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,34 +14,32 @@ if TYPE_CHECKING:
 import random
 from threading import Thread
 
-from aiwolf_nlp_common.packet import Info, Packet, Request, Setting, Status, Talk
+from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
 
 
 class Agent:
+    """エージェントの基底クラス."""
+
     def __init__(
         self,
         config: configparser.ConfigParser | None = None,
         name: str | None = None,
     ) -> None:
+        """エージェントの初期化を行う."""
+        self.config = config
         self.agent_name: str = name if name is not None else ""
-        self.idx = -1
-
         self.request: Request | None = None
         self.info: Info | None = None
         self.setting: Setting | None = None
         self.talk_history: list[Talk] = []
         self.whisper_history: list[Talk] = []
-
-        self.comments: list[str] = []
-        if config is not None:
-            with Path.open(
-                Path(config.get("path", "random_talk")),
-                encoding="utf-8",
-            ) as f:
-                self.comments = f.read().splitlines()
+        self.idx: int = -1
+        self.role: Role | None = None
 
     @staticmethod
     def timeout(func: Callable) -> Callable:
+        """アクションタイムアウトを設定するデコレータ."""
+
         def _wrapper(self, *args, **kwargs) -> str:  # noqa: ANN001, ANN002, ANN003
             res = ""
 
@@ -72,6 +72,8 @@ class Agent:
 
     @staticmethod
     def send_agent_index(func: Callable) -> Callable:
+        """エージェントのインデックスをインデックス付き文字列のエージェント名に変換するデコレータ."""
+
         def _wrapper(self, *args, **kwargs) -> str:  # noqa: ANN001, ANN002, ANN003
             res = func(self, *args, **kwargs)
             if type(res) is not int:
@@ -81,6 +83,7 @@ class Agent:
         return _wrapper
 
     def set_packet(self, packet: Packet) -> None:
+        """パケット情報をセットする."""
         if packet is None:
             return
         self.request = packet.request
@@ -102,6 +105,7 @@ class Agent:
             self.role = self.info.role_map.get(self.info.agent)
 
     def get_alive_agents(self) -> list[str]:
+        """生存しているエージェントのリストを取得する."""
         if self.info is None:
             return []
         if self.info.status_map is None:
@@ -110,27 +114,47 @@ class Agent:
 
     @timeout
     def name(self) -> str:
+        """名前リクエストに対する応答を返す."""
         return self.agent_name
 
-    @timeout
-    def talk(self) -> str:
-        return random.choice(self.comments)  # noqa: S311
+    def initialize(self) -> None:
+        """ゲーム開始リクエストに対する初期化処理を行う."""
+        self.request: Request | None = None
+        self.info: Info | None = None
+        self.setting: Setting | None = None
+        self.talk_history: list[Talk] = []
+        self.whisper_history: list[Talk] = []
+        self.idx = -1
+        self.role = None
+
+        self.comments: list[str] = []
+        if self.config is not None:
+            with Path.open(
+                Path(self.config.get("path", "random_talk")),
+                encoding="utf-8",
+            ) as f:
+                self.comments = f.read().splitlines()
+
+    def daily_initialize(self) -> None:
+        """昼開始リクエストに対する処理を行う."""
 
     @timeout
     def whisper(self) -> str:
+        """囁きリクエストに対する応答を返す."""
         return random.choice(self.comments)  # noqa: S311
 
     @timeout
-    @send_agent_index
-    def vote(self) -> int:
-        target: int = agent_util.agent_name_to_idx(
-            name=random.choice(self.get_alive_agents()),  # noqa: S311
-        )
-        return target
+    def talk(self) -> str:
+        """トークリクエストに対する応答を返す."""
+        return random.choice(self.comments)  # noqa: S311
+
+    def daily_finish(self) -> None:
+        """昼終了リクエストに対する処理を行う."""
 
     @timeout
     @send_agent_index
     def divine(self) -> int:
+        """占いリクエストに対する応答を返す."""
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
@@ -139,6 +163,16 @@ class Agent:
     @timeout
     @send_agent_index
     def guard(self) -> int:
+        """護衛リクエストに対する応答を返す."""
+        target: int = agent_util.agent_name_to_idx(
+            name=random.choice(self.get_alive_agents()),  # noqa: S311
+        )
+        return target
+
+    @timeout
+    @send_agent_index
+    def vote(self) -> int:
+        """投票リクエストに対する応答を返す."""
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
@@ -147,24 +181,17 @@ class Agent:
     @timeout
     @send_agent_index
     def attack(self) -> int:
+        """襲撃リクエストに対する応答を返す."""
         target: int = agent_util.agent_name_to_idx(
             name=random.choice(self.get_alive_agents()),  # noqa: S311
         )
         return target
 
-    def initialize(self) -> None:
-        pass
-
-    def daily_initialize(self) -> None:
-        pass
-
-    def daily_finish(self) -> None:
-        pass
-
     def finish(self) -> None:
-        pass
+        """ゲーム終了リクエストに対する処理を行う."""
 
     def action(self) -> str | None:  # noqa: C901, PLR0911
+        """リクエストの種類に応じたアクションを実行する."""
         match self.request:
             case Request.NAME:
                 return self.name()
@@ -191,14 +218,7 @@ class Agent:
         return None
 
     def transfer_state(self, prev_agent: Agent) -> None:
-        self.role = prev_agent.role
-        self.agent_name = prev_agent.agent_name
-        self.idx = prev_agent.idx
-
-        self.request = prev_agent.request
-        self.info = prev_agent.info
-        self.setting = prev_agent.setting
-        self.talk_history = prev_agent.talk_history
-        self.whisper_history = prev_agent.whisper_history
-
-        self.comments = prev_agent.comments
+        """エージェントの状態を別のエージェントにコピーする."""
+        for attr_name, attr_value in vars(prev_agent).items():
+            if not attr_name.startswith("__"):
+                setattr(self, attr_name, attr_value)

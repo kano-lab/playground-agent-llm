@@ -1,3 +1,5 @@
+"""設定に応じたエージェントを起動するスクリプト."""
+
 import configparser
 import logging
 import multiprocessing
@@ -28,12 +30,12 @@ if __name__ == "__main__":
     agent_num = int(config.get("agent", "num"))
     logger.info("エージェント数: %d", agent_num)
     if agent_num == 1:
-        starter.execute(1, config)
+        starter.connect(1, config)
     else:
         threads = []
         for i in range(agent_num):
             thread = multiprocessing.Process(
-                target=starter.execute,
+                target=starter.connect,
                 args=(i + 1, config),
             )
             threads.append(thread)
