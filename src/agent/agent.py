@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from utils import agent_util
@@ -10,6 +9,9 @@ from utils import agent_util
 if TYPE_CHECKING:
     import configparser
     from collections.abc import Callable
+
+    from google.genai import Client
+    from google.genai.chats import Chat
 
 import random
 from threading import Thread
@@ -38,13 +40,10 @@ class Agent:
         self.idx: int = -1
         self.role: Role | None = None
 
-        self.comments: list[str] = []
-        if self.config is not None:
-            with Path.open(
-                Path(self.config.get("path", "random_talk")),
-                encoding="utf-8",
-            ) as f:
-                self.comments = f.read().splitlines()
+        self.client: Client | None = None
+        self.chat: Chat | None
+        self.sent_talk_count: int = 0
+        self.sent_whisper_count: int = 0
 
     @staticmethod
     def timeout(func: Callable) -> Callable:
@@ -153,12 +152,40 @@ class Agent:
     @timeout
     def whisper(self) -> str:
         """囁きリクエストに対する応答を返す."""
-        return random.choice("a")  # noqa: S311
+        if self.chat is None:
+            return ""
+        message = f"""
+        囁きリクエストを受け取りました。
+        発言するべき内容のみを出力してください。
+        現在の囁き履歴:
+        {"\n".join(
+            [
+                f"{w.agent}: {w.text}"
+                for w in self.whisper_history[self.sent_whisper_count :]
+            ]
+        )}
+        """
+        self.sent_whisper_count = len(self.whisper_history)
+        return self.chat.send_message(message).text or ""
 
     @timeout
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
-        return random.choice("a")  # noqa: S311
+        if self.chat is None:
+            return ""
+        message = f"""
+        トークリクエストを受け取りました。
+        発言するべき内容のみを出力してください。
+        現在の囁き履歴:
+        {"\n".join(
+            [
+                f"{t.agent}: {t.text}"
+                for t in self.talk_history[self.sent_talk_count :]
+            ]
+        )}
+        """
+        self.sent_talk_count = len(self.talk_history)
+        return self.chat.send_message(message).text or ""
 
     def daily_finish(self) -> None:
         """昼終了リクエストに対する処理を行う."""
