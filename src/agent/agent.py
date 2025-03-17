@@ -26,7 +26,7 @@ class Agent:
         self,
         config: configparser.ConfigParser | None = None,
         name: str | None = None,
-        logger: AgentLogger | None = None,  # noqa: ARG002
+        logger: AgentLogger | None = None,
     ) -> None:
         """エージェントの初期化を行う."""
         self.config = config
