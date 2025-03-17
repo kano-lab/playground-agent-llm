@@ -11,17 +11,16 @@ if TYPE_CHECKING:
     import configparser
     from collections.abc import Callable
 
-    from utils.agent_logger import AgentLogger
-    
     from google.genai import Client
     from google.genai.chats import Chat
+
+    from utils.agent_logger import AgentLogger
 
 import random
 from threading import Thread
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
 from google import genai
-from google.genai.types import Part, UserContent
 
 
 class Agent:
