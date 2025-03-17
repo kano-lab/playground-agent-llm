@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from utils import agent_util
@@ -15,6 +14,8 @@ import random
 from threading import Thread
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
+from google import genai
+from google.genai.types import ModelContent, Part, UserContent
 
 
 class Agent:
@@ -126,14 +127,17 @@ class Agent:
         self.whisper_history: list[Talk] = []
         self.idx = -1
         self.role = None
-
-        self.comments: list[str] = []
-        if self.config is not None:
-            with Path.open(
-                Path(self.config.get("path", "random_talk")),
-                encoding="utf-8",
-            ) as f:
-                self.comments = f.read().splitlines()
+        if self.config is None:
+            raise ValueError(self.config, "Config not found")
+        self.client = genai.Client(api_key=self.config.get("gemini", "api_key"))
+        self.chat = self.client.chats.create(
+            model="gemini-2.0-flash-001",
+            history=[
+                UserContent(
+                    parts=[Part(text=f"あなたは人狼ゲームのエージェントです。あなたの名前は{self.info.}")],
+                ),
+            ],
+        )
 
     def daily_initialize(self) -> None:
         """昼開始リクエストに対する処理を行う."""
@@ -141,12 +145,12 @@ class Agent:
     @timeout
     def whisper(self) -> str:
         """囁きリクエストに対する応答を返す."""
-        return random.choice(self.comments)  # noqa: S311
+        return random.choice("a")  # noqa: S311
 
     @timeout
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
-        return random.choice(self.comments)  # noqa: S311
+        return random.choice("a")  # noqa: S311
 
     def daily_finish(self) -> None:
         """昼終了リクエストに対する処理を行う."""
