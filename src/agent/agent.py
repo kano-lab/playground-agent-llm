@@ -10,6 +10,8 @@ if TYPE_CHECKING:
     import configparser
     from collections.abc import Callable
 
+    from utils.agent_logger import AgentLogger
+    
     from google.genai import Client
     from google.genai.chats import Chat
 
@@ -28,10 +30,12 @@ class Agent:
         self,
         config: configparser.ConfigParser | None = None,
         name: str | None = None,
+        logger: AgentLogger | None = None,  # noqa: ARG002
     ) -> None:
         """エージェントの初期化を行う."""
         self.config = config
         self.agent_name: str = name if name is not None else ""
+        self.agent_logger: AgentLogger | None = None
         self.request: Request | None = None
         self.info: Info | None = None
         self.setting: Setting | None = None
