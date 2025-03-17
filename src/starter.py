@@ -53,8 +53,8 @@ def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901
                 logger.info("再接続を試みます")
                 sleep(15)
 
-        agent = Agent(config=config, name=name)
         agent_logger = AgentLogger(config=config, name=name)
+        agent = Agent(config=config, name=name, logger=agent_logger)
         while True:
             packet = client.receive()
             agent_logger.logger.debug(packet)
