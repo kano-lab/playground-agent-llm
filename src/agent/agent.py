@@ -138,7 +138,7 @@ class Agent:
             return
         self.client = genai.Client(api_key=self.config.get("gemini", "api_key"))
         self.chat = self.client.chats.create(model=self.config.get("gemini", "model"))
-        response = self.chat.send_message(
+        self.chat.send_message(
             f"""
             あなたは人狼ゲームのエージェントです。
             あなたの名前は{self.info.agent}です。
@@ -151,8 +151,6 @@ class Agent:
             説明は以上です。「はい」と出力してください。
             """,
         )
-        if self.agent_logger is not None:
-            self.agent_logger.logger.debug(response.text)
 
     def daily_initialize(self) -> None:
         """昼開始リクエストに対する処理を行う."""
