@@ -19,8 +19,5 @@ maintainers = [
 ]
 keywords = ["aiwolf"]
 
-[tool.uv.pip]
-extra-index-url = ["https://test.pypi.org/simple/"]
-
 [project.urls]
-Homepage = "https://aiwolf.org"
+Homepage = "https://aiwolfdial.github.io/aiwolf-nlp/"
