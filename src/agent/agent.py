@@ -11,12 +11,12 @@ if TYPE_CHECKING:
     import configparser
     from collections.abc import Callable
 
-    from utils.agent_logger import AgentLogger
-
 import random
 from threading import Thread
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
+
+from utils.agent_logger import AgentLogger
 
 
 class Agent:
@@ -26,12 +26,11 @@ class Agent:
         self,
         config: configparser.ConfigParser | None = None,
         name: str | None = None,
-        logger: AgentLogger | None = None,
     ) -> None:
         """エージェントの初期化を行う."""
         self.config = config
         self.agent_name: str = name if name is not None else ""
-        self.agent_logger: AgentLogger | None = logger
+        self.agent_logger: AgentLogger | None = None
         self.request: Request | None = None
         self.info: Info | None = None
         self.setting: Setting | None = None
@@ -96,8 +95,6 @@ class Agent:
 
     def set_packet(self, packet: Packet) -> None:
         """パケット情報をセットする."""
-        if packet is None:
-            return
         self.request = packet.request
         if packet.info is not None:
             self.info = packet.info
@@ -111,12 +108,19 @@ class Agent:
         if self.request == Request.INITIALIZE:
             self.talk_history: list[Talk] = []
             self.whisper_history: list[Talk] = []
+            if self.config is None:
+                raise ValueError(self.config, "Config not found")
+            self.agent_logger = AgentLogger(self.config, self.agent_name)
             if self.info is None:
-                return
+                raise ValueError(self.info, "Info not found")
+            self.agent_logger.set_game_id(game_id=self.info.game_id)
             if self.info.agent is None or self.info.role_map is None:
-                return
+                raise ValueError(self.info, "Agent or role_map not found")
             self.idx = agent_util.agent_name_to_idx(name=self.info.agent)
             self.role = self.info.role_map.get(self.info.agent)
+
+        if self.agent_logger is not None:
+            self.agent_logger.logger.debug(packet)
 
     def get_alive_agents(self) -> list[str]:
         """生存しているエージェントのリストを取得する."""

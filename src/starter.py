@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 import utils.agent_util
 from agent.agent import Agent
-from utils.agent_logger import AgentLogger
 
 if TYPE_CHECKING:
     from configparser import ConfigParser
@@ -18,7 +17,7 @@ from aiwolf_nlp_common.client import Client
 from aiwolf_nlp_common.packet import Request
 
 
-def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901
+def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901, PLR0912
     """エージェントを起動する."""
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
@@ -53,15 +52,12 @@ def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901
                 logger.info("再接続を試みます")
                 sleep(15)
 
-        agent_logger = AgentLogger(config=config, name=name)
-        agent = Agent(config=config, name=name, logger=agent_logger)
+        agent = Agent(config, name)
         while True:
             packet = client.receive()
-            agent_logger.logger.debug(packet)
             if packet.request == Request.INITIALIZE:
                 if packet.info is None:
                     raise ValueError(packet.info, "Info not found")
-                agent_logger.set_game_id(game_id=packet.info.game_id)
                 if packet.info.agent is None or packet.info.role_map is None:
                     raise ValueError(packet.info, "Agent or role_map not found")
                 role = packet.info.role_map.get(packet.info.agent)
@@ -71,7 +67,8 @@ def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901
             agent.set_packet(packet)
             req = agent.action()
             if agent.request is not None:
-                agent_logger.packet(agent.request, req)
+                if agent.agent_logger is not None:
+                    agent.agent_logger.packet(agent.request, req)
                 if req is not None:
                     client.send(req)
             if packet.request == Request.FINISH:
