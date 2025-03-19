@@ -32,6 +32,7 @@ class Agent:
         idx: int,
         role: Role,
     ) -> None:
+        """エージェントの初期化を行う."""
         self.config = config
         self.agent_name = name
         self.agent_logger = AgentLogger(config, name, game_id)
