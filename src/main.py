@@ -7,16 +7,15 @@ from pathlib import Path
 
 import starter
 
-if __name__ == "__main__":
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+console_handler.setFormatter(formatter)
 
+if __name__ == "__main__":
     multiprocessing.set_start_method("spawn")
 
     config_path = "./config/config.ini"
@@ -28,7 +27,7 @@ if __name__ == "__main__":
         raise FileNotFoundError(config_path, "設定ファイルが見つかりません")
 
     agent_num = int(config.get("agent", "num"))
-    logger.info("エージェント数: %d", agent_num)
+    logger.info("エージェント数を %d に設定しました", agent_num)
     if agent_num == 1:
         starter.connect(config)
     else:
