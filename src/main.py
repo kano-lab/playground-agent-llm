@@ -1,8 +1,8 @@
 """設定に応じたエージェントを起動するスクリプト."""
 
-import configparser
 import logging
 import multiprocessing
+from configparser import ConfigParser
 from pathlib import Path
 
 import starter
@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     config_path = "./config/config.ini"
     if Path(config_path).exists():
-        config = configparser.ConfigParser()
+        config = ConfigParser()
         config.read(config_path)
         logger.info("設定ファイルを読み込みました")
     else:
@@ -30,13 +30,13 @@ if __name__ == "__main__":
     agent_num = int(config.get("agent", "num"))
     logger.info("エージェント数: %d", agent_num)
     if agent_num == 1:
-        starter.connect(1, config)
+        starter.connect(config)
     else:
         threads = []
         for i in range(agent_num):
             thread = multiprocessing.Process(
                 target=starter.connect,
-                args=(i + 1, config),
+                args=(config, i + 1),
             )
             threads.append(thread)
             thread.start()

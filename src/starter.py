@@ -5,11 +5,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-import utils.agent_util
-from agent.agent import Agent
+from agent.utils import init_agent_from_packet
 
 if TYPE_CHECKING:
     from configparser import ConfigParser
+
+    from agent.agent import Agent
 
 from time import sleep
 
@@ -17,7 +18,7 @@ from aiwolf_nlp_common.client import Client
 from aiwolf_nlp_common.packet import Request
 
 
-def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901, PLR0912
+def connect(config: ConfigParser, idx: int = 1) -> None:
     """エージェントを起動する."""
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
@@ -28,6 +29,8 @@ def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901, PLR0912
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
+    name = config.get("agent", "team") + str(idx)
+
     while True:
         client = Client(
             url=config.get("websocket", "url"),
@@ -37,7 +40,6 @@ def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901, PLR0912
                 else None
             ),
         )
-        name = config.get("agent", "team") + str(idx)
         while True:
             try:
                 client.connect()
@@ -52,25 +54,23 @@ def connect(idx: int, config: ConfigParser) -> None:  # noqa: C901, PLR0912
                 logger.info("再接続を試みます")
                 sleep(15)
 
-        agent = Agent(config, name)
+        agent: Agent | None = None
         while True:
             packet = client.receive()
+            if packet.request == Request.NAME:
+                client.send(name)
+                continue
+
             if packet.request == Request.INITIALIZE:
-                if packet.info is None:
-                    raise ValueError(packet.info, "Info not found")
-                if packet.info.agent is None or packet.info.role_map is None:
-                    raise ValueError(packet.info, "Agent or role_map not found")
-                role = packet.info.role_map.get(packet.info.agent)
-                if role is None:
-                    raise ValueError(packet.info, "Role not found")
-                agent = utils.agent_util.set_role(prev_agent=agent, role=role)
+                agent = init_agent_from_packet(config, name, packet)
+            if agent is None:
+                raise ValueError(agent, "Agent not found")
             agent.set_packet(packet)
             req = agent.action()
-            if agent.request is not None:
-                if agent.agent_logger is not None:
-                    agent.agent_logger.packet(agent.request, req)
-                if req is not None:
-                    client.send(req)
+            agent.agent_logger.packet(agent.request, req)
+            if req is not None:
+                client.send(req)
+
             if packet.request == Request.FINISH:
                 break
 

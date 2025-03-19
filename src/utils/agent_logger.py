@@ -19,6 +19,7 @@ class AgentLogger:
         self,
         config: configparser.ConfigParser,
         name: str,
+        game_id: str,
     ) -> None:
         """エージェントのログを初期化する."""
         self.config = config
@@ -34,9 +35,6 @@ class AgentLogger:
             )
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
-
-    def set_game_id(self, game_id: str) -> None:
-        """ゲームのIDを設定する."""
         if self.config.getboolean("log", "file_output"):
             output_dir = Path(self.config.get("log", "output_dir")) / game_id
             output_dir.mkdir(
@@ -54,8 +52,10 @@ class AgentLogger:
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
 
-    def packet(self, req: Request, res: str | None) -> None:
+    def packet(self, req: Request | None, res: str | None) -> None:
         """パケットのログを出力."""
+        if req is None:
+            return
         if not self.config.has_option("log", req.lower()):
             return
         if not self.config.getboolean("log", req.lower()):
