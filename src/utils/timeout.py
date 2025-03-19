@@ -1,3 +1,5 @@
+"""アクションタイムアウトを定義するモジュール."""
+
 from collections.abc import Callable
 from threading import Thread
 

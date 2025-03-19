@@ -18,7 +18,7 @@ from aiwolf_nlp_common.client import Client
 from aiwolf_nlp_common.packet import Request
 
 
-def connect(config: ConfigParser, idx: int = 1) -> None:
+def connect(config: ConfigParser, idx: int = 1) -> None:  # noqa: C901
     """エージェントを起動する."""
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
