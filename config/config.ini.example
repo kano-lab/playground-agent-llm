@@ -7,9 +7,18 @@ auto_reconnect = false
 num = 5
 team = kanolab
 
-[gemini]
-api_key = PASTE_KEY_HERE
+[llm]
+type = google
+
+[openai]
+model = gpt-4o-mini
+temperature = 0.7
+api_key = 
+
+[google]
 model = gemini-2.0-flash-lite
+temperature = 0.7
+api_key = 
 
 [log]
 console_output = true
