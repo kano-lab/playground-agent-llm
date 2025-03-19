@@ -84,15 +84,23 @@ def handle_game_session(
 def connect(config: ConfigParser, idx: int = 1) -> None:
     """エージェントを起動する."""
     name = config.get("agent", "team") + str(idx)
-
     while True:
-        client = create_client(config)
-        connect_to_server(client, name)
         try:
-            handle_game_session(client, config, name)
-        finally:
-            client.close()
-            logger.info("エージェント %s とゲームサーバの接続を切断しました", name)
+            client = create_client(config)
+            connect_to_server(client, name)
+            try:
+                handle_game_session(client, config, name)
+            finally:
+                client.close()
+                logger.info("エージェント %s とゲームサーバの接続を切断しました", name)
+        except Exception as ex:  # noqa: BLE001
+            logger.warning(
+                "エージェント %s がエラーで終了しました",
+                name,
+            )
+            logger.warning(ex)
+            logger.info("再接続を試みます")
+            sleep(15)
 
         if not config.getboolean("websocket", "auto_reconnect"):
             break
