@@ -99,8 +99,6 @@ def connect(config: ConfigParser, idx: int = 1) -> None:
                 name,
             )
             logger.warning(ex)
-            logger.info("再接続を試みます")
-            sleep(15)
 
         if not config.getboolean("websocket", "auto_reconnect"):
             break
