@@ -33,27 +33,30 @@ pip install .
 [aiwolfdial/aiwolf-nlp-server](https://github.com/aiwolfdial/aiwolf-nlp-server) を参考にしてください。
 
 ```
-cp config/config.ini.example config/config.ini
+cp config/config.yml.example config/config.yml
 python src/main.py
 ```
 
-## 設定 (config.ini)
+## 設定 (config.yml)
 
-### [websocket]
+### web_socket
 
 `url`: ゲームサーバのURLです。ローカル内のゲームサーバに接続する場合はデフォルト値で問題ありません。
 `token`: ゲームサーバに接続するためのトークンです。大会運営から提供されるトークンを設定してください。
 `auto_reconnect`: 対戦終了後に自動で再接続するかどうかの設定です。
 
-### [agent]
+### agent
 
 `num`: 起動するエージェントの数です。自己対戦の場合はデフォルト値で問題ありません。  
 `team`: エージェントのチーム名です。大会運営から提供されるチーム名を設定してください。
 
-### [log]
+### log
 
 `console_output`: コンソールにログを出力するかどうかの設定です。  
 `file_output`: ファイルにログを出力するかどうかの設定です。  
 `output_dir`: ログを保存するディレクトリのパスです。
-`level`: ログの出力レベルです。`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`のいずれかを設定してください。  
+`level`: ログの出力レベルです。`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`のいずれかを設定してください。
+
+#### log.requests
+
 `name`, `initialize`, `daily_initialize`, `whisper`, `talk`, `daily_finish`, `divine`, `guard`, `vote`, `attack`, `finish`: 各リクエストのログを出力するかどうかの設定です。

@@ -2,19 +2,13 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import TYPE_CHECKING
-
-from utils.timeout import timeout
-
-if TYPE_CHECKING:
-    from configparser import ConfigParser
-
 import random
+from pathlib import Path
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
 
 from utils.agent_logger import AgentLogger
+from utils.timeout import timeout
 
 
 class Agent:
@@ -22,7 +16,7 @@ class Agent:
 
     def __init__(
         self,
-        config: ConfigParser,
+        config: dict,
         name: str,
         game_id: str,
         idx: int,
@@ -43,7 +37,7 @@ class Agent:
         self.comments: list[str] = []
         if self.config is not None:
             with Path.open(
-                Path(self.config.get("path", "random_talk")),
+                Path(str(self.config["path"]["random_talk"])),
                 encoding="utf-8",
             ) as f:
                 self.comments = f.read().splitlines()

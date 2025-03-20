@@ -7,8 +7,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import configparser
-
     from aiwolf_nlp_common.packet import Request
 
 
@@ -17,7 +15,7 @@ class AgentLogger:
 
     def __init__(
         self,
-        config: configparser.ConfigParser,
+        config: dict,
         name: str,
         game_id: str,
     ) -> None:
@@ -26,17 +24,17 @@ class AgentLogger:
         self.name = name
         self.logger = logging.getLogger(name)
         self.logger.setLevel(
-            logging.getLevelNamesMapping()[self.config.get("log", "level").upper()],
+            logging.getLevelNamesMapping()[str(self.config["log"]["level"]).upper()],
         )
-        if self.config.getboolean("log", "console_output"):
+        if bool(self.config["log"]["console_output"]):
             handler = logging.StreamHandler()
             formatter = logging.Formatter(
                 "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             )
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
-        if self.config.getboolean("log", "file_output"):
-            output_dir = Path(self.config.get("log", "output_dir")) / game_id
+        if bool(self.config["log"]["file_output"]):
+            output_dir = Path(str(self.config["log"]["output_dir"])) / game_id
             output_dir.mkdir(
                 parents=True,
                 exist_ok=True,
@@ -56,9 +54,9 @@ class AgentLogger:
         """パケットのログを出力."""
         if req is None:
             return
-        if not self.config.has_option("log", req.lower()):
+        if req.lower() not in self.config["log"]["request"]:
             return
-        if not self.config.getboolean("log", req.lower()):
+        if not bool(self.config["log"]["request"][req.lower()]):
             return
         if res is None:
             self.logger.info([str(req)])
