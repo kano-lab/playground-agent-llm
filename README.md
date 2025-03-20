@@ -1,6 +1,6 @@
-# aiwolf-nlp-agent
+# aiwolf-nlp-agent-llm
 
-人狼知能コンテスト（自然言語部門） のサンプルエージェントです。
+人狼知能コンテスト（自然言語部門） のLLMを用いたサンプルエージェントです。
 
 ローカル内での動作確認ならびに自己対戦するためのゲームサーバについては、[aiwolfdial/aiwolf-nlp-server](https://github.com/aiwolfdial/aiwolf-nlp-server) を参考にしてください。  
 大会の詳細ならびに参加登録については、[AIWolfDial2024WinterJp](https://sites.google.com/view/aiwolfdial2024winterjp/) を参考にしてください。
