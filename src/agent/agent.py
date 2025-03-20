@@ -5,6 +5,7 @@ from __future__ import annotations
 from time import sleep
 from typing import TYPE_CHECKING
 
+from jinja2 import Template
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
@@ -76,12 +77,30 @@ class Agent:
             return []
         return [k for k, v in self.info.status_map.items() if v == Status.ALIVE]
 
-    def _send_message_to_llm(self, content: str) -> str | None:
+    def _send_message_to_llm(self, request: Request | None) -> str | None:
+        if request is None:
+            return None
+        if request.lower() not in self.config["prompt"]:
+            return None
+        prompt = self.config["prompt"][request.lower()]
+        if float(self.config["llm"]["sleep_time"]) > 0:
+            sleep(float(self.config["llm"]["sleep_time"]))
+        key = {
+            "info": self.info,
+            "setting": self.setting,
+            "talk_history": self.talk_history,
+            "whisper_history": self.whisper_history,
+            "role": self.role,
+            "sent_talk_count": self.sent_talk_count,
+            "sent_whisper_count": self.sent_whisper_count,
+        }
+        template: Template = Template(prompt)
+        prompt = template.render(**key).strip()
         if self.llm_model is None:
             self.agent_logger.logger.error("LLM is not initialized")
             return None
         try:
-            self.llm_message_history.append(HumanMessage(content=content))
+            self.llm_message_history.append(HumanMessage(content=prompt))
             response = self.llm_model.invoke(self.llm_message_history)
             response_content = (
                 response.content
@@ -89,7 +108,7 @@ class Agent:
                 else str(response.content[0])
             )
             self.llm_message_history.append(AIMessage(content=response_content))
-            self.agent_logger.logger.info(["LLM", content, response_content])
+            self.agent_logger.logger.info(["LLM", prompt, response_content])
         except Exception:
             self.agent_logger.logger.exception("Failed to send message to LLM")
             return None
@@ -122,149 +141,55 @@ class Agent:
                 )
             case _:
                 raise ValueError(model_type, "Unknown LLM type")
-
-        prompt = f"""
-        あなたは人狼ゲームのエージェントです。
-        あなたの名前は{self.info.agent}です。
-        あなたの役職は{self.role}です。
-
-        これからゲームを進行していきます。リクエストが来た際には、適切な応答を返してください。
-
-        トークリクエストと囁きリクエストに対しては、ゲーム内で発言するべき内容のみを出力してください。
-        履歴がある場合は、それを参考にしてください。ない場合は、適切な内容を出力してください。
-        これ以上の情報を得られないと考えたときなどトークを終了したい場合については「Over」と出力してください。
-
-        他のリクエストに対しては、行動の対象となるエージェントの名前のみを出力してください。
-        対象となる生存しているエージェントの一覧が付与されています。
-
-        あなたのレスポンスはそのままゲーム内に送信されるため、不要な情報を含めないでください。
-        """
-        self._send_message_to_llm(prompt)
+        self._send_message_to_llm(self.request)
 
     def daily_initialize(self) -> None:
         """昼開始リクエストに対する処理を行う."""
-        message = "昼開始リクエスト"
-        if self.info is not None:
-            message += f"{self.info.day}日目\n"
-            if self.info.medium_result is not None:
-                message += f"霊能結果: {self.info.medium_result}\n"
-            if self.info.divine_result is not None:
-                message += f"占い結果: {self.info.divine_result}\n"
-            if self.info.executed_agent is not None:
-                message += f"追放結果: {self.info.executed_agent}\n"
-            if self.info.attacked_agent is not None:
-                message += f"襲撃結果: {self.info.attacked_agent}\n"
-            if self.info.vote_list is not None:
-                message += f"投票結果: {self.info.vote_list}\n"
-            if self.info.attack_vote_list is not None:
-                message += f"襲撃投票結果: {self.info.attack_vote_list}\n"
-        sleep(3)
-        self._send_message_to_llm(message)
+        self._send_message_to_llm(self.request)
 
     @timeout
     def whisper(self) -> str:
         """囁きリクエストに対する応答を返す."""
-        message = f"""
-        囁きリクエスト
-        履歴:
-        {"\n".join(
-            [
-                f"{w.agent}: {w.text}"
-                for w in self.whisper_history[self.sent_whisper_count :]
-            ]
-        )}
-        """
-        sleep(3)
+        response = self._send_message_to_llm(self.request)
         self.sent_whisper_count = len(self.whisper_history)
-        return self._send_message_to_llm(message) or ""
+        return response or ""
 
     @timeout
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
-        message = f"""
-        トークリクエスト
-        履歴:
-        {"\n".join(
-            [
-                f"{t.agent}: {t.text}"
-                for t in self.talk_history[self.sent_talk_count :]
-            ]
-        )}
-        """
-        sleep(3)
+        response = self._send_message_to_llm(self.request)
         self.sent_talk_count = len(self.talk_history)
-        return self._send_message_to_llm(message) or ""
+        return response or ""
 
     def daily_finish(self) -> None:
         """昼終了リクエストに対する処理を行う."""
-        message = "昼終了リクエスト"
-        if self.info is not None:
-            message += f"{self.info.day}日目\n"
-            if self.info.medium_result is not None:
-                message += f"霊能結果: {self.info.medium_result}\n"
-            if self.info.divine_result is not None:
-                message += f"占い結果: {self.info.divine_result}\n"
-            if self.info.executed_agent is not None:
-                message += f"追放結果: {self.info.executed_agent}\n"
-            if self.info.attacked_agent is not None:
-                message += f"襲撃結果: {self.info.attacked_agent}\n"
-            if self.info.vote_list is not None:
-                message += f"投票結果: {self.info.vote_list}\n"
-            if self.info.attack_vote_list is not None:
-                message += f"襲撃投票結果: {self.info.attack_vote_list}\n"
-        sleep(3)
-        self._send_message_to_llm(message)
+        self._send_message_to_llm(self.request)
 
     @timeout
     def divine(self) -> str:
         """占いリクエストに対する応答を返す."""
-        message = f"""
-        占いリクエスト
-        対象:
-        {"\n".join(self.get_alive_agents())}
-        """
-        sleep(3)
-        return self._send_message_to_llm(message) or random.choice(  # noqa: S311
+        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
             self.get_alive_agents(),
         )
 
     @timeout
     def guard(self) -> str:
         """護衛リクエストに対する応答を返す."""
-        message = f"""
-        護衛リクエスト
-        対象:
-        {"\n".join(self.get_alive_agents())}
-        """
-        sleep(3)
-        return self._send_message_to_llm(message) or random.choice(  # noqa: S311
+        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
             self.get_alive_agents(),
         )
 
     @timeout
     def vote(self) -> str:
         """投票リクエストに対する応答を返す."""
-        message = f"""
-        投票リクエスト
-        対象:
-        {"\n".join(self.get_alive_agents())}
-        """
-        sleep(3)
-        return self._send_message_to_llm(message) or random.choice(  # noqa: S311
+        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
             self.get_alive_agents(),
         )
 
     @timeout
     def attack(self) -> str:
         """襲撃リクエストに対する応答を返す."""
-        message = f"""
-        襲撃リクエスト
-        対象:
-        {"\n".join(self.get_alive_agents())}
-        """
-        sleep(3)
-        sleep(3)
-        return self._send_message_to_llm(message) or random.choice(  # noqa: S311
+        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
             self.get_alive_agents(),
         )
 
