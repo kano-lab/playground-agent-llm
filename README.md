@@ -54,7 +54,7 @@ python src/main.py
 
 `console_output`: コンソールにログを出力するかどうかの設定です。  
 `file_output`: ファイルにログを出力するかどうかの設定です。  
-`output_dir`: ログを保存するディレクトリのパスです。
+`output_dir`: ログを保存するディレクトリのパスです。  
 `level`: ログの出力レベルです。`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`のいずれかを設定してください。
 
 #### log.requests
