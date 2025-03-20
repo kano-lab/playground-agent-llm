@@ -2,15 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from aiwolf_nlp_common.packet import Role
 
 from agent.agent import Agent
 from utils.timeout import timeout
-
-if TYPE_CHECKING:
-    from configparser import ConfigParser
 
 
 class Seer(Agent):
@@ -18,7 +13,7 @@ class Seer(Agent):
 
     def __init__(
         self,
-        config: ConfigParser,
+        config: dict,
         name: str,
         game_id: str,
         idx: int,

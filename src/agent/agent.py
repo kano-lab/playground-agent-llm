@@ -13,8 +13,6 @@ from pydantic import SecretStr
 from utils.timeout import timeout
 
 if TYPE_CHECKING:
-    from configparser import ConfigParser
-
     from langchain_core.language_models.chat_models import BaseChatModel
     from langchain_core.messages import BaseMessage
 
@@ -30,7 +28,7 @@ class Agent:
 
     def __init__(
         self,
-        config: ConfigParser,
+        config: dict,
         name: str,
         game_id: str,
         idx: int,
@@ -108,19 +106,19 @@ class Agent:
         if self.config is None or self.info is None:
             return
 
-        model_type = self.config.get("llm", "type")
+        model_type = str(self.config["llm"]["type"])
         match model_type:
             case "openai":
                 self.llm_model = ChatOpenAI(
-                    model=self.config.get("openai", "model"),
-                    temperature=self.config.getfloat("openai", "temperature"),
-                    api_key=SecretStr(self.config.get("openai", "api_key")),
+                    model=str(self.config["openai"]["model"]),
+                    temperature=float(self.config["openai"]["temperature"]),
+                    api_key=SecretStr(str(self.config["openai"]["api_key"])),
                 )
             case "google":
                 self.llm_model = ChatGoogleGenerativeAI(
-                    model=self.config.get("google", "model"),
-                    temperature=self.config.getfloat("google", "temperature"),
-                    api_key=SecretStr(self.config.get("google", "api_key")),
+                    model=str(self.config["google"]["model"]),
+                    temperature=float(self.config["google"]["temperature"]),
+                    api_key=SecretStr(str(self.config["google"]["api_key"])),
                 )
             case _:
                 raise ValueError(model_type, "Unknown LLM type")

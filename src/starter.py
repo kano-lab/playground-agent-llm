@@ -8,8 +8,6 @@ from typing import TYPE_CHECKING
 from utils.agent_utils import init_agent_from_packet
 
 if TYPE_CHECKING:
-    from configparser import ConfigParser
-
     from agent.agent import Agent
 
 from time import sleep
@@ -27,13 +25,13 @@ console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
 
-def create_client(config: ConfigParser) -> Client:
+def create_client(config: dict) -> Client:
     """クライアントの作成."""
     return Client(
-        url=config.get("websocket", "url"),
+        url=str(config["web_socket"]["url"]),
         token=(
-            config.get("websocket", "token")
-            if config.has_option("websocket", "token")
+            str(config["web_socket"]["token"])
+            if config["web_socket"]["token"]
             else None
         ),
     )
@@ -58,7 +56,7 @@ def connect_to_server(client: Client, name: str) -> None:
 
 def handle_game_session(
     client: Client,
-    config: ConfigParser,
+    config: dict,
     name: str,
 ) -> None:
     """ゲームセッションの処理."""
@@ -81,10 +79,9 @@ def handle_game_session(
             break
 
 
-def connect(config: ConfigParser, idx: int = 1) -> None:
+def connect(config: dict, idx: int = 1) -> None:
     """エージェントを起動する."""
-    name = config.get("agent", "team") + str(idx)
-
+    name = str(config["agent"]["team"]) + str(idx)
     while True:
         client = create_client(config)
         connect_to_server(client, name)
@@ -103,5 +100,5 @@ def connect(config: ConfigParser, idx: int = 1) -> None:
             )
             logger.warning(ex)
 
-        if not config.getboolean("websocket", "auto_reconnect"):
+        if not bool(config["web_socket"]["auto_reconnect"]):
             break

@@ -1,0 +1,40 @@
+web_socket:
+  url: ws://127.0.0.1:8080/ws
+  token:
+  auto_reconnect: false
+
+agent:
+  num: 5
+  team: kanolab
+
+llm:
+  type: google
+
+openai:
+  model: gpt-4o-mini
+  temperature: 0.7
+  api_key: YOUR_API_KEY
+
+google:
+  model: gemini-2.0-flash-lite
+  temperature: 0.7
+  api_key: YOUR_API_KEY
+
+log:
+  console_output: true
+  file_output: true
+  output_dir: ./log
+  level: debug
+
+  request:
+    name: false
+    initialize: false
+    daily_initialize: false
+    whisper: true
+    talk: true
+    daily_finish: false
+    divine: true
+    guard: true
+    vote: true
+    attack: true
+    finish: false

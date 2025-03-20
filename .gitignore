@@ -266,5 +266,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,windows,python,venv
 
-config.ini
-log.ini
+config/config.yml

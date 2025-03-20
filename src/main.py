@@ -2,8 +2,9 @@
 
 import logging
 import multiprocessing
-from configparser import ConfigParser
 from pathlib import Path
+
+import yaml
 
 import starter
 
@@ -18,15 +19,12 @@ console_handler.setFormatter(formatter)
 if __name__ == "__main__":
     multiprocessing.set_start_method("spawn")
 
-    config_path = "./config/config.ini"
-    if Path(config_path).exists():
-        config = ConfigParser()
-        config.read(config_path)
+    config_path = "./config/config.yml"
+    with Path.open(Path(config_path)) as f:
+        config = yaml.safe_load(f)
         logger.info("設定ファイルを読み込みました")
-    else:
-        raise FileNotFoundError(config_path, "設定ファイルが見つかりません")
 
-    agent_num = int(config.get("agent", "num"))
+    agent_num = int(config["agent"]["num"])
     logger.info("エージェント数を %d に設定しました", agent_num)
     if agent_num == 1:
         starter.connect(config)

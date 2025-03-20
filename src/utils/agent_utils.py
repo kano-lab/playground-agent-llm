@@ -1,7 +1,6 @@
 """エージェント関連のユーティリティ関数を提供するモジュール."""
 
 import re
-from configparser import ConfigParser
 
 from aiwolf_nlp_common.packet import Packet, Role
 
@@ -40,7 +39,7 @@ def agent_idx_to_agent(idx: int) -> str:
 
 @staticmethod
 def init_agent_from_packet(
-    config: ConfigParser,
+    config: dict,
     name: str,
     packet: Packet,
 ) -> Agent:
