@@ -35,4 +35,3 @@ class Seer(Agent):
     def vote(self) -> str:
         """投票リクエストに対する応答を返す."""
         return super().vote()
-        return super().vote()
