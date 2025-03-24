@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import random
-from time import sleep
-
 from aiwolf_nlp_common.packet import Role
 
 from agent.agent import Agent
