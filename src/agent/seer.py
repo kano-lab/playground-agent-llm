@@ -30,9 +30,7 @@ class Seer(Agent):
 
     def divine(self) -> str:
         """占いリクエストに対する応答を返す."""
-        sleep(15)
-        return random.choice(self.get_alive_agents())  # noqa: S311
-        # return super().divine()
+        return super().divine()
 
     def vote(self) -> str:
         """投票リクエストに対する応答を返す."""
