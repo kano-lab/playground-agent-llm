@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import random
+from threading import Thread
 from time import sleep
 from typing import TYPE_CHECKING
 
@@ -11,17 +13,16 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 
-from utils.timeout import timeout
-
 if TYPE_CHECKING:
     from langchain_core.language_models.chat_models import BaseChatModel
     from langchain_core.messages import BaseMessage
 
-import random
-
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
 
 from utils.agent_logger import AgentLogger
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class Agent:
@@ -52,16 +53,51 @@ class Agent:
         self.llm_model: BaseChatModel | None = None
         self.llm_message_history: list[BaseMessage] = []
 
+    @staticmethod
+    def timeout(func: Callable) -> Callable:
+        """アクションタイムアウトを設定するデコレータ."""
+
+        def _wrapper(self: Agent, *args, **kwargs) -> str:  # noqa: ANN002, ANN003
+            res = ""
+
+            def execute_with_timeout() -> None:
+                nonlocal res
+                try:
+                    res = func(self, *args, **kwargs)
+                except Exception as e:  # noqa: BLE001
+                    res = e
+
+            thread = Thread(target=execute_with_timeout, daemon=True)
+            thread.start()
+
+            timeout_value = self.setting.timeout.action if self.setting else 0
+            if timeout_value > 0:
+                thread.join(timeout=timeout_value)
+                if thread.is_alive():
+                    self.agent_logger.logger.warning(
+                        "アクションがタイムアウトしました: %s",
+                        self.request,
+                    )
+            else:
+                thread.join()
+
+            if isinstance(res, Exception):
+                raise res
+
+            return res
+
+        return _wrapper
+
     def set_packet(self, packet: Packet) -> None:
         """パケット情報をセットする."""
         self.request = packet.request
-        if packet.info is not None:
+        if packet.info:
             self.info = packet.info
-        if packet.setting is not None:
+        if packet.setting:
             self.setting = packet.setting
-        if packet.talk_history is not None:
+        if packet.talk_history:
             self.talk_history.extend(packet.talk_history)
-        if packet.whisper_history is not None:
+        if packet.whisper_history:
             self.whisper_history.extend(packet.whisper_history)
         if self.request == Request.INITIALIZE:
             self.talk_history: list[Talk] = []
@@ -71,9 +107,7 @@ class Agent:
 
     def get_alive_agents(self) -> list[str]:
         """生存しているエージェントのリストを取得する."""
-        if self.info is None:
-            return []
-        if self.info.status_map is None:
+        if not self.info:
             return []
         return [k for k, v in self.info.status_map.items() if v == Status.ALIVE]
 
@@ -147,14 +181,12 @@ class Agent:
         """昼開始リクエストに対する処理を行う."""
         self._send_message_to_llm(self.request)
 
-    @timeout
     def whisper(self) -> str:
         """囁きリクエストに対する応答を返す."""
         response = self._send_message_to_llm(self.request)
         self.sent_whisper_count = len(self.whisper_history)
         return response or ""
 
-    @timeout
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
         response = self._send_message_to_llm(self.request)
@@ -165,28 +197,24 @@ class Agent:
         """昼終了リクエストに対する処理を行う."""
         self._send_message_to_llm(self.request)
 
-    @timeout
     def divine(self) -> str:
         """占いリクエストに対する応答を返す."""
         return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
             self.get_alive_agents(),
         )
 
-    @timeout
     def guard(self) -> str:
         """護衛リクエストに対する応答を返す."""
         return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
             self.get_alive_agents(),
         )
 
-    @timeout
     def vote(self) -> str:
         """投票リクエストに対する応答を返す."""
         return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
             self.get_alive_agents(),
         )
 
-    @timeout
     def attack(self) -> str:
         """襲撃リクエストに対する応答を返す."""
         return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
@@ -196,6 +224,7 @@ class Agent:
     def finish(self) -> None:
         """ゲーム終了リクエストに対する処理を行う."""
 
+    @timeout
     def action(self) -> str | None:  # noqa: C901, PLR0911
         """リクエストの種類に応じたアクションを実行する."""
         match self.request:

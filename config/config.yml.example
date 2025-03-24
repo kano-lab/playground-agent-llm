@@ -51,7 +51,7 @@ prompt:
     {%- endif %}
     {% if info.attacked_agent is not none -%}
     襲撃結果: {{ info.attacked_agent }}
-    {-% endif %}
+    {%- endif %}
     {% if info.vote_list is not none -%}
     投票結果: {{ info.vote_list }}
     {%- endif %}
