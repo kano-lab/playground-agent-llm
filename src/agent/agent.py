@@ -35,23 +35,22 @@ class Agent:
         self.role = role
 
         self.comments: list[str] = []
-        if self.config is not None:
-            with Path.open(
-                Path(str(self.config["path"]["random_talk"])),
-                encoding="utf-8",
-            ) as f:
-                self.comments = f.read().splitlines()
+        with Path.open(
+            Path(str(self.config["path"]["random_talk"])),
+            encoding="utf-8",
+        ) as f:
+            self.comments = f.read().splitlines()
 
     def set_packet(self, packet: Packet) -> None:
         """パケット情報をセットする."""
         self.request = packet.request
-        if packet.info is not None:
+        if packet.info:
             self.info = packet.info
-        if packet.setting is not None:
+        if packet.setting:
             self.setting = packet.setting
-        if packet.talk_history is not None:
+        if packet.talk_history:
             self.talk_history.extend(packet.talk_history)
-        if packet.whisper_history is not None:
+        if packet.whisper_history:
             self.whisper_history.extend(packet.whisper_history)
         if self.request == Request.INITIALIZE:
             self.talk_history: list[Talk] = []
@@ -60,9 +59,7 @@ class Agent:
 
     def get_alive_agents(self) -> list[str]:
         """生存しているエージェントのリストを取得する."""
-        if self.info is None:
-            return []
-        if self.info.status_map is None:
+        if not self.info:
             return []
         return [k for k, v in self.info.status_map.items() if v == Status.ALIVE]
 

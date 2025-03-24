@@ -26,7 +26,7 @@ ROLE_TO_AGENT_CLS: dict[Role, type[Agent]] = {
 def agent_name_to_idx(name: str) -> int:
     """インデックス付き文字列のエージェント名をインデックスに変換する."""
     match = re.match(r"Agent\[(\d{2})\]", name)
-    if match is None:
+    if not match:
         raise ValueError(name, "Invalid agent name format")
     return int(match.group(1))
 
@@ -44,15 +44,11 @@ def init_agent_from_packet(
     packet: Packet,
 ) -> Agent:
     """役職に対応するエージェントクラスを初期化する."""
-    if packet.info is None:
+    if not packet.info:
         raise ValueError(packet.info, "Info not found")
-    if packet.info.agent is None or packet.info.role_map is None:
-        raise ValueError(packet.info, "Agent or role_map not found")
     role = packet.info.role_map.get(packet.info.agent)
-    if role is None:
+    if not role:
         raise ValueError(packet.info, "Role not found")
-    if packet.info.agent is None or packet.info.role_map is None:
-        raise ValueError(packet.info, "Agent or role_map not found")
     idx = agent_name_to_idx(name=packet.info.agent)
     return ROLE_TO_AGENT_CLS[role](
         config=config,
