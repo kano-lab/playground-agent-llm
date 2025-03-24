@@ -52,13 +52,13 @@ class AgentLogger:
 
     def packet(self, req: Request | None, res: str | None) -> None:
         """パケットのログを出力."""
-        if req is None:
+        if not req:
             return
         if req.lower() not in self.config["log"]["request"]:
             return
         if not bool(self.config["log"]["request"][req.lower()]):
             return
-        if res is None:
+        if not res:
             self.logger.info([str(req)])
         else:
             self.logger.info([str(req), res])

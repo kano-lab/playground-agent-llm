@@ -68,12 +68,12 @@ def handle_game_session(
             continue
         if packet.request == Request.INITIALIZE:
             agent = init_agent_from_packet(config, name, packet)
-        if agent is None:
+        if not agent:
             raise ValueError(agent, "エージェントが初期化されていません")
         agent.set_packet(packet)
         req = agent.action()
         agent.agent_logger.packet(agent.request, req)
-        if req is not None:
+        if req:
             client.send(req)
         if packet.request == Request.FINISH:
             break
