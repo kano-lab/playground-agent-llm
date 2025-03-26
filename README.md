@@ -9,8 +9,10 @@
 
 > [!IMPORTANT]
 > 次回大会では以下の修正が予定されています。
+>
 > - トークリクエストならびに囁きリクエストにおける発言の文字数制限の追加
 > - 13人ゲームの追加
+> - カスタムプレイヤー名とカスタムプロフィールの追加
 
 大会参加者はエージェントを実装したうえで、ご自身の端末でエージェントを実行、大会運営が提供するゲームサーバに接続する必要があります。エージェントの実装については、実装言語を含め、制限はありません。  
 自己対戦では、5体のエージェントをご自身の端末で実行し、大会運営が提供する自己対戦用のゲームサーバに接続しすることで、エージェント同士の対戦を行うことができます。
@@ -20,7 +22,7 @@
 > [!IMPORTANT]
 > Python 3.11以上が必要です。
 
-```
+```bash
 git clone https://github.com/aiwolfdial/aiwolf-nlp-agent.git
 cd aiwolf-nlp-agent
 python -m venv .venv
@@ -30,7 +32,7 @@ pip install .
 
 > [!NOTE]
 > aiwolf-nlp-commonとは、役職や接続方式に関するプログラムが定義されているPythonパッケージです。  
-> 詳細については、https://github.com/aiwolfdial/aiwolf-nlp-common をご覧ください。
+> 詳細については、[aiwolfdial/aiwolf-nlp-common](https://github.com/aiwolfdial/aiwolf-nlp-common) をご覧ください。
 
 ## 実行方法
 
@@ -39,7 +41,7 @@ pip install .
 事前に、ローカル内にゲームサーバを立ち上げる必要があります。  
 [aiwolfdial/aiwolf-nlp-server](https://github.com/aiwolfdial/aiwolf-nlp-server) を参考にしてください。
 
-```
+```bash
 cp config/config.yml.example config/config.yml
 python src/main.py
 ```
