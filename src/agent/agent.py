@@ -178,6 +178,7 @@ class Agent:
                 self.llm_model = ChatOllama(
                     model=str(self.config["ollama"]["model"]),
                     temperature=float(self.config["ollama"]["temperature"]),
+                    base_url=str(self.config["ollama"]["base_url"]),
                 )
             case _:
                 raise ValueError(model_type, "Unknown LLM type")
