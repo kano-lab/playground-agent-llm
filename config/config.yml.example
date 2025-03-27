@@ -21,6 +21,10 @@ google:
   temperature: 0.7
   api_key: YOUR_API_KEY
 
+ollama:
+  model: llama3.1
+  temperature: 0.7
+
 prompt:
   initialize: |-
     あなたは人狼ゲームのエージェントです。

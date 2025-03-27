@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from jinja2 import Template
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 
@@ -172,6 +173,11 @@ class Agent:
                     model=str(self.config["google"]["model"]),
                     temperature=float(self.config["google"]["temperature"]),
                     api_key=SecretStr(str(self.config["google"]["api_key"])),
+                )
+            case "ollama":
+                self.llm_model = ChatOllama(
+                    model=str(self.config["ollama"]["model"]),
+                    temperature=float(self.config["ollama"]["temperature"]),
                 )
             case _:
                 raise ValueError(model_type, "Unknown LLM type")
