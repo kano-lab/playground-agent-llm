@@ -70,7 +70,7 @@ class Agent:
             thread = Thread(target=execute_with_timeout, daemon=True)
             thread.start()
 
-            timeout_value = self.setting.timeout.action if self.setting else 0
+            timeout_value = (self.setting.timeout.action if self.setting else 0) // 1000
             if timeout_value > 0:
                 thread.join(timeout=timeout_value)
                 if thread.is_alive():
