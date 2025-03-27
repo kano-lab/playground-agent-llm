@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import logging
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from time import time
 from typing import TYPE_CHECKING
 
 from ulid import ULID
