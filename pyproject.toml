@@ -5,7 +5,11 @@ description = "aiwolf-nlp-agent"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
 readme = "README.md"
-dependencies = ["aiwolf-nlp-common==0.6.1", "pyyaml>=6.0.2"]
+dependencies = [
+    "aiwolf-nlp-common==0.6.1",
+ "python-ulid>=3.0.0",
+ "pyyaml>=6.0.2",
+]
 
 authors = [
     { name = "aiwolfdial", email = "aiwolf@kanolab.net" },

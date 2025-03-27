@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import logging
+from datetime import UTC, datetime, timezone
 from pathlib import Path
+from time import time
 from typing import TYPE_CHECKING
+
+from ulid import ULID
 
 if TYPE_CHECKING:
     from aiwolf_nlp_common.packet import Request
@@ -34,7 +38,13 @@ class AgentLogger:
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
         if bool(self.config["log"]["file_output"]):
-            output_dir = Path(str(self.config["log"]["output_dir"])) / game_id
+            ulid: ULID = ULID.from_str(game_id)
+            tz = datetime.now(UTC).astimezone().tzinfo
+            output_dir = Path(
+                str(self.config["log"]["output_dir"]),
+            ) / datetime.fromtimestamp(ulid.timestamp, tz=tz).strftime(
+                "%Y%m%d%H%M%S%f",
+            )
             output_dir.mkdir(
                 parents=True,
                 exist_ok=True,
