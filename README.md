@@ -1,8 +1,23 @@
 # aiwolf-nlp-agent
 人狼知能コンテスト（自然言語部門） のサンプルエージェントです。
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [次回大会について](#%E6%AC%A1%E5%9B%9E%E5%A4%A7%E4%BC%9A%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+  - [13人人狼](#13%E4%BA%BA%E4%BA%BA%E7%8B%BC)
+  - [5人人狼](#5%E4%BA%BA%E4%BA%BA%E7%8B%BC)
+- [環境構築](#%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89)
+- [実行方法](#%E5%AE%9F%E8%A1%8C%E6%96%B9%E6%B3%95)
+  - [自己対戦](#%E8%87%AA%E5%B7%B1%E5%AF%BE%E6%88%A6)
+- [設定 (config.yml)](#%E8%A8%AD%E5%AE%9A-configyml)
+  - [web_socket](#web_socket)
+  - [agent](#agent)
+  - [log](#log)
+    - [log.requests](#logrequests)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## 次回大会について
 最新情報は[aiwolfdial.github.io](https://aiwolfdial.github.io/aiwolf-nlp/)をご確認ください。
