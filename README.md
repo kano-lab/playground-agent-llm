@@ -33,8 +33,12 @@
 | 人狼 | 人狼 | 1 | 夜のターンに1名選択し、そのプレイヤーを襲撃することでゲームから除外することができる |
 | 狂人 | 人狼 | 1 | 人狼陣営の勝利が自身の勝利になる |
 
+### 大会の予選の実行方法
+> [!IMPORTANT]
+> 最新情報は[aiwolfdial.github.io](https://aiwolfdial.github.io/aiwolf-nlp/)をご確認ください。
+
 大会参加者はエージェントを実装したうえで、ご自身の端末でエージェントを実行、大会運営が提供するゲームサーバに接続する必要があります。エージェントの実装については、実装言語を含め、制限はありません。  
-自己対戦では、5体のエージェントをご自身の端末で実行し、大会運営が提供する自己対戦用のゲームサーバに接続しすることで、エージェント同士の対戦を行うことができます。
+自己対戦では、5体,13体のエージェントをご自身の端末で実行し、大会運営が提供する自己対戦用のゲームサーバに接続しすることで、エージェント同士の対戦を行うことができます。
 
 ローカル内での動作確認ならびに自己対戦するためのゲームサーバについては、[aiwolfdial/aiwolf-nlp-server](https://github.com/aiwolfdial/aiwolf-nlp-server) を参考にしてください。
 
@@ -92,3 +96,81 @@ python src/main.py
 #### log.requests
 
 `name`, `initialize`, `daily_initialize`, `whisper`, `talk`, `daily_finish`, `divine`, `guard`, `vote`, `attack`, `finish`: 各リクエストのログを出力するかどうかの設定です。
+
+## カスタマイズ方法
+
+### 全役職共通
+`src/agent/agent.py`: このファイルは全ての役職に共通する動作を記述するファイルです。
+
+#### 要求される動作に関するメソッド
+| メソッド名 | 変更推奨度 | 働き |
+| ---- | ---- | ---- |
+| `name` | 🔴 **非推奨** | `NAME`リクエスト時にチーム名を返却するメソッド |
+| `initialize` | 🟡 **推奨度: 中** | `INITIALIZE`リクエスト時に送信されたゲームの設定を受け取る処理を行うメソッド |
+| `daily_initialize` | 🟡 **推奨度: 中** | `DAILY_INITIALIZE`リクエスト時の処理を行うメソッド |
+| `whisper` | 🟢 **推奨度: 高** | 13人-人狼の`WHISPER`リクエスト時に人狼同士の囁きを行うメソッド |
+| `talk` | 🟢 **推奨度: 高** | `TALK`リクエスト時に他のプレイヤーと会話を行うための発言を生成するメソッド |
+| `daily_finish` | 🟡 **推奨度: 中** | `DAILY_FINISH`リクエスト時の処理を行うメソッド |
+| `vote` | 🟡 **推奨度: 中** | `VOTE`リクエスト時に投票先を決定するメソッド |
+| `finish` | 🟡 **推奨度: 中** | `FINISH`リクエスト時の処理を行うメソッド|
+
+### 村人
+path: `src/agent/villager.py`
+
+このファイルは村人専用の動作を記述するファイルです。\
+`talk`や`vote`を変更することで村人専用の行動を設定することができます。
+
+### 占い師
+path: `src/agent/seer.py`
+
+このファイルは占い師専用の動作を記述するファイルです。\
+`talk`や`vote`,`divine`を変更することで占い師専用の行動を設定することができます。
+
+#### 占いのメソッド
+| メソッド名 | 変更推奨度 | 働き |
+| ---- | ---- | ---- |
+| `divine` | 🟢 **推奨度: 高** | `DIVINE`リクエスト時に占い先を決定するメソッド |
+
+
+#### 占い結果の取得方法について
+agentの`info.divine_result`から取得できます。\
+詳細は[aiwolf-nlp-common](https://github.com/aiwolfdial/aiwolf-nlp-common/blob/main/src/aiwolf_nlp_common/packet/judge.py)をご確認ください。
+
+
+### 霊媒師
+path: `src/agent/medium.py`
+
+このファイルは霊媒師専用の動作を記述するファイルです。\
+`talk`や`vote`を変更することで霊媒師専用の行動を設定することができます。
+
+#### 霊媒師の結果の取得方法について
+agentの`info.medium_result`から取得できます。\
+詳細は[aiwolf-nlp-common](https://github.com/aiwolfdial/aiwolf-nlp-common/blob/main/src/aiwolf_nlp_common/packet/judge.py)をご確認ください。
+
+### 騎士
+path: `src/agent/bodyguard.py`
+
+このファイルは騎士専用の動作を記述するファイルです。\
+`talk`や`vote`,`guard`を変更することで騎士専用の行動を設定することができます。
+
+#### 護衛のメソッド
+| メソッド名 | 変更推奨度 | 働き |
+| ---- | ---- | ---- |
+| `guard` | 🟢 **推奨度: 高** | `GUARD`リクエスト時に護衛先を決定するメソッド |
+
+### 人狼
+path: `src/agent/werewolf.py`
+
+このファイルは人狼専用の動作を記述するファイルです。\
+`talk`や`vote`,`attack`を変更することで人狼専用の行動を設定することができます。
+
+#### 襲撃のメソッド
+| メソッド名 | 変更推奨度 | 働き |
+| ---- | ---- | ---- |
+| `attack` | 🟢 **推奨度: 高** | `ATTACK`リクエスト時に護衛先を決定するメソッド |
+
+### 狂人
+path: `src/agent/possessed.py`
+
+このファイルは狂人専用の動作を記述するファイルです。\
+`talk`や`vote`を変更することで狂人専用の行動を設定することができます。
