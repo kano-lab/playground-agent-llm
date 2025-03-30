@@ -11,4 +11,4 @@ jobs:
     steps:
       - uses: technote-space/toc-generator@v4
         with:
-          TOC_TITLE: "目次"
+          TOC_TITLE: "## 目次"
