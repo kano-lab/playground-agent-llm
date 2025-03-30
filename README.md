@@ -108,7 +108,6 @@ python src/main.py
 | `name` | 🔴 **非推奨** | `NAME`リクエスト時にチーム名を返却するメソッド |
 | `initialize` | 🟡 **推奨度: 中** | `INITIALIZE`リクエスト時に送信されたゲームの設定を受け取る処理を行うメソッド |
 | `daily_initialize` | 🟡 **推奨度: 中** | `DAILY_INITIALIZE`リクエスト時の処理を行うメソッド |
-| `whisper` | 🟢 **推奨度: 高** | 13人-人狼の`WHISPER`リクエスト時に人狼同士の囁きを行うメソッド |
 | `talk` | 🟢 **推奨度: 高** | `TALK`リクエスト時に他のプレイヤーと会話を行うための発言を生成するメソッド |
 | `daily_finish` | 🟡 **推奨度: 中** | `DAILY_FINISH`リクエスト時の処理を行うメソッド |
 | `vote` | 🟡 **推奨度: 中** | `VOTE`リクエスト時に投票先を決定するメソッド |
@@ -162,12 +161,13 @@ path: `src/agent/bodyguard.py`
 path: `src/agent/werewolf.py`
 
 このファイルは人狼専用の動作を記述するファイルです。\
-`talk`や`vote`,`attack`を変更することで人狼専用の行動を設定することができます。
+`talk`や`vote`,`attack`,`whisper`を変更することで人狼専用の行動を設定することができます。
 
 #### 襲撃のメソッド
 | メソッド名 | 変更推奨度 | 働き |
 | ---- | ---- | ---- |
 | `attack` | 🟢 **推奨度: 高** | `ATTACK`リクエスト時に護衛先を決定するメソッド |
+| `whisper` | 🟢 **推奨度: 高** | 13人-人狼の`WHISPER`リクエスト時に人狼同士の囁きを行うメソッド |
 
 ### 狂人
 path: `src/agent/possessed.py`
