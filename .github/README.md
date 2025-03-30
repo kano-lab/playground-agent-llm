@@ -1,9 +1,8 @@
-- Table of Content
-{:toc}
-
 # aiwolf-nlp-agent
-
 人狼知能コンテスト（自然言語部門） のサンプルエージェントです。
+
+<!-- START doctoc -->
+<!-- END doctoc -->
 
 ## 次回大会について
 最新情報は[aiwolfdial.github.io](https://aiwolfdial.github.io/aiwolf-nlp/)をご確認ください。
