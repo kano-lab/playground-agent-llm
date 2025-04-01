@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import random
+from pathlib import Path
 from threading import Thread
 from time import sleep
 from typing import TYPE_CHECKING
@@ -54,7 +55,7 @@ class Agent:
         self.llm_model: BaseChatModel | None = None
         self.llm_message_history: list[BaseMessage] = []
 
-        load_dotenv(dotenv_path="./../../config/.env")
+        load_dotenv(Path(__file__).parent.joinpath("./../../config/.env"))
 
     @staticmethod
     def timeout(func: Callable) -> Callable:
