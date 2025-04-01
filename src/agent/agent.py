@@ -36,7 +36,6 @@ class Agent:
         config: dict,
         name: str,
         game_id: str,
-        idx: int,
         role: Role,
     ) -> None:
         """エージェントの初期化を行う."""
@@ -48,7 +47,6 @@ class Agent:
         self.setting: Setting | None = None
         self.talk_history: list[Talk] = []
         self.whisper_history: list[Talk] = []
-        self.idx = idx
         self.role = role
 
         self.sent_talk_count: int = 0

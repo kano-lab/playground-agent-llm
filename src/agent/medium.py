@@ -15,11 +15,10 @@ class Medium(Agent):
         config: dict,
         name: str,
         game_id: str,
-        idx: int,
         role: Role,  # noqa: ARG002
     ) -> None:
         """霊媒師のエージェントを初期化する."""
-        super().__init__(config, name, game_id, idx, Role.MEDIUM)
+        super().__init__(config, name, game_id, Role.MEDIUM)
 
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
