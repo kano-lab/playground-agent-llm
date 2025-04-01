@@ -6,8 +6,38 @@ Please refer to this root page for the latest information. \
 [aiwolfdial.github.io](https://aiwolfdial.github.io/aiwolf-nlp/)
 
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## 目次
+
+- [大会のレギュレーション](#%E5%A4%A7%E4%BC%9A%E3%81%AE%E3%83%AC%E3%82%AE%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+- [環境構築](#%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89)
+- [実行方法](#%E5%AE%9F%E8%A1%8C%E6%96%B9%E6%B3%95)
+  - [エージェントプログラムの実行コマンド](#%E3%82%A8%E3%83%BC%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%88%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%AE%E5%AE%9F%E8%A1%8C%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89)
+  - [手元環境での実行](#%E6%89%8B%E5%85%83%E7%92%B0%E5%A2%83%E3%81%A7%E3%81%AE%E5%AE%9F%E8%A1%8C)
+  - [予選での対戦方法](#%E4%BA%88%E9%81%B8%E3%81%A7%E3%81%AE%E5%AF%BE%E6%88%A6%E6%96%B9%E6%B3%95)
+  - [本戦での対戦方法](#%E6%9C%AC%E6%88%A6%E3%81%A7%E3%81%AE%E5%AF%BE%E6%88%A6%E6%96%B9%E6%B3%95)
+- [設定 (config.yml)](#%E8%A8%AD%E5%AE%9A-configyml)
+  - [web_socket](#web_socket)
+  - [agent](#agent)
+  - [log](#log)
+    - [log.requests](#logrequests)
+- [エージェントのカスタマイズ方法](#%E3%82%A8%E3%83%BC%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%88%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA%E6%96%B9%E6%B3%95)
+  - [全役職共通](#%E5%85%A8%E5%BD%B9%E8%81%B7%E5%85%B1%E9%80%9A)
+    - [要求される動作に関するメソッド(5人村の場合)](#%E8%A6%81%E6%B1%82%E3%81%95%E3%82%8C%E3%82%8B%E5%8B%95%E4%BD%9C%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E3%83%A1%E3%82%BD%E3%83%83%E3%83%895%E4%BA%BA%E6%9D%91%E3%81%AE%E5%A0%B4%E5%90%88)
+  - [村人](#%E6%9D%91%E4%BA%BA)
+  - [占い師](#%E5%8D%A0%E3%81%84%E5%B8%AB)
+    - [占いのメソッド](#%E5%8D%A0%E3%81%84%E3%81%AE%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89)
+    - [占い結果の取得方法について](#%E5%8D%A0%E3%81%84%E7%B5%90%E6%9E%9C%E3%81%AE%E5%8F%96%E5%BE%97%E6%96%B9%E6%B3%95%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+  - [霊媒師](#%E9%9C%8A%E5%AA%92%E5%B8%AB)
+    - [霊媒師の結果の取得方法について](#%E9%9C%8A%E5%AA%92%E5%B8%AB%E3%81%AE%E7%B5%90%E6%9E%9C%E3%81%AE%E5%8F%96%E5%BE%97%E6%96%B9%E6%B3%95%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+  - [騎士](#%E9%A8%8E%E5%A3%AB)
+    - [護衛のメソッド](#%E8%AD%B7%E8%A1%9B%E3%81%AE%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89)
+  - [人狼](#%E4%BA%BA%E7%8B%BC)
+    - [襲撃のメソッド](#%E8%A5%B2%E6%92%83%E3%81%AE%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89)
+  - [狂人](#%E7%8B%82%E4%BA%BA)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## 大会のレギュレーション
 大会のルールや注意事項など参加するにあたりエージェントが守るべき項目については下記を参考にしてください。 \
