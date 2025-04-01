@@ -15,11 +15,10 @@ class Werewolf(Agent):
         config: dict,
         name: str,
         game_id: str,
-        idx: int,
         role: Role,  # noqa: ARG002
     ) -> None:
         """人狼のエージェントを初期化する."""
-        super().__init__(config, name, game_id, idx, Role.WEREWOLF)
+        super().__init__(config, name, game_id, Role.WEREWOLF)
 
     def whisper(self) -> str:
         """囁きリクエストに対する応答を返す."""

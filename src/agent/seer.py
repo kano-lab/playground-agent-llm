@@ -15,11 +15,10 @@ class Seer(Agent):
         config: dict,
         name: str,
         game_id: str,
-        idx: int,
         role: Role,  # noqa: ARG002
     ) -> None:
         """占い師のエージェントを初期化する."""
-        super().__init__(config, name, game_id, idx, Role.SEER)
+        super().__init__(config, name, game_id, Role.SEER)
 
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""

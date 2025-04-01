@@ -15,11 +15,10 @@ class Possessed(Agent):
         config: dict,
         name: str,
         game_id: str,
-        idx: int,
         role: Role,  # noqa: ARG002
     ) -> None:
         """狂人のエージェントを初期化する."""
-        super().__init__(config, name, game_id, idx, Role.POSSESSED)
+        super().__init__(config, name, game_id, Role.POSSESSED)
 
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
