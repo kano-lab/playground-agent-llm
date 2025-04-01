@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import os
 import random
 from threading import Thread
 from time import sleep
 from typing import TYPE_CHECKING
 
+from dotenv import load_dotenv
 from jinja2 import Template
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -53,6 +55,8 @@ class Agent:
         self.sent_whisper_count: int = 0
         self.llm_model: BaseChatModel | None = None
         self.llm_message_history: list[BaseMessage] = []
+
+        load_dotenv(dotenv_path="./../../config/.env")
 
     @staticmethod
     def timeout(func: Callable) -> Callable:
@@ -166,13 +170,13 @@ class Agent:
                 self.llm_model = ChatOpenAI(
                     model=str(self.config["openai"]["model"]),
                     temperature=float(self.config["openai"]["temperature"]),
-                    api_key=SecretStr(str(self.config["openai"]["api_key"])),
+                    api_key=SecretStr(os.environ["OPENAI_API_KEY"]),
                 )
             case "google":
                 self.llm_model = ChatGoogleGenerativeAI(
                     model=str(self.config["google"]["model"]),
                     temperature=float(self.config["google"]["temperature"]),
-                    api_key=SecretStr(str(self.config["google"]["api_key"])),
+                    api_key=SecretStr(os.environ["GOOGLE_API_KEY"]),
                 )
             case "ollama":
                 self.llm_model = ChatOllama(
