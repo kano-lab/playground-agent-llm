@@ -37,7 +37,8 @@
 
 ## 次回大会について
 
-最新情報は[aiwolfdial.github.io](https://aiwolfdial.github.io/aiwolf-nlp/)をご確認ください。
+> [!IMPORTANT]
+> 最新情報は[aiwolfdial.github.io](https://aiwolfdial.github.io/aiwolf-nlp/)をご確認ください。
 
 ### 13人-人狼
 
