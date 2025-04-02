@@ -6,6 +6,7 @@ web_socket:
 agent:
   num: 5
   team: kanolab
+  kill_on_timeout: true
 
 path:
   random_talk: ./resource/2019071_44011_AIWolfTalkLogs.txt

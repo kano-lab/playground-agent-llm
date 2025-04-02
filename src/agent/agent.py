@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import random
 from pathlib import Path
-from threading import Thread
+from time import sleep
 from typing import TYPE_CHECKING
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
 
 from utils.agent_logger import AgentLogger
+from utils.stoppable_thread import StoppableThread
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -49,7 +50,7 @@ class Agent:
     def timeout(func: Callable) -> Callable:
         """アクションタイムアウトを設定するデコレータ."""
 
-        def _wrapper(self: Agent, *args, **kwargs) -> str:  # noqa: ANN002, ANN003
+        def _wrapper(self, *args, **kwargs) -> str:  # noqa: ANN001, ANN002, ANN003
             res = ""
 
             def execute_with_timeout() -> None:
@@ -59,10 +60,13 @@ class Agent:
                 except Exception as e:  # noqa: BLE001
                     res = e
 
-            thread = Thread(target=execute_with_timeout, daemon=True)
+            thread = StoppableThread(target=execute_with_timeout)
             thread.start()
-
-            timeout_value = (self.setting.timeout.action if self.setting else 0) // 1000
+            timeout_value = (
+                self.setting.timeout.action
+                if hasattr(self, "setting") and self.setting
+                else 0
+            ) // 1000
             if timeout_value > 0:
                 thread.join(timeout=timeout_value)
                 if thread.is_alive():
@@ -70,12 +74,16 @@ class Agent:
                         "アクションがタイムアウトしました: %s",
                         self.request,
                     )
+                    if bool(self.config["agent"]["kill_on_timeout"]):
+                        thread.stop()
+                        self.agent_logger.logger.warning(
+                            "アクションを強制終了しました: %s",
+                            self.request,
+                        )
             else:
                 thread.join()
-
             if isinstance(res, Exception):
                 raise res
-
             return res
 
         return _wrapper
@@ -118,6 +126,11 @@ class Agent:
 
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
+        self.agent_logger.logger.info("talk start")
+        for i in range(10):
+            sleep(1)
+            self.agent_logger.logger.info(i)
+        self.agent_logger.logger.info("talk end")
         return random.choice(self.comments)  # noqa: S311
 
     def daily_finish(self) -> None:
