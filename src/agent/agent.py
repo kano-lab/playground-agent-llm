@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import random
 from pathlib import Path
-from time import sleep
 from typing import TYPE_CHECKING
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
@@ -124,11 +123,6 @@ class Agent:
 
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
-        self.agent_logger.logger.info("talk start")
-        for i in range(10):
-            sleep(1)
-            self.agent_logger.logger.info(i)
-        self.agent_logger.logger.info("talk end")
         return random.choice(self.comments)  # noqa: S311
 
     def daily_finish(self) -> None:
