@@ -6,6 +6,7 @@ web_socket:
 agent:
   num: 5
   team: kanolab
+  kill_on_timeout: true
 
 llm:
   type: google
