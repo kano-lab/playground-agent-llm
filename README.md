@@ -11,7 +11,10 @@ Please refer to this root page for the latest information. \
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## 目次
 
-- [大会のレギュレーション](#%E5%A4%A7%E4%BC%9A%E3%81%AE%E3%83%AC%E3%82%AE%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+- [次回大会について](#%E6%AC%A1%E5%9B%9E%E5%A4%A7%E4%BC%9A%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+  - [13人-人狼](#13%E4%BA%BA-%E4%BA%BA%E7%8B%BC)
+  - [5人-人狼](#5%E4%BA%BA-%E4%BA%BA%E7%8B%BC)
+  - [大会の予選の実行方法](#%E5%A4%A7%E4%BC%9A%E3%81%AE%E4%BA%88%E9%81%B8%E3%81%AE%E5%AE%9F%E8%A1%8C%E6%96%B9%E6%B3%95)
 - [環境構築](#%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89)
 - [実行方法](#%E5%AE%9F%E8%A1%8C%E6%96%B9%E6%B3%95)
   - [エージェントプログラムの実行コマンド](#%E3%82%A8%E3%83%BC%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%88%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%AE%E5%AE%9F%E8%A1%8C%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89)
