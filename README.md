@@ -16,3 +16,6 @@ source .venv/bin/activate
 pip install .
 pip uninstall aiwolf-nlp-agent-llm
 ```
+
+## その他
+実行方法や設定などその他については[aiwolf-nlp-agent](https://github.com/aiwolfdial/aiwolf-nlp-agent)をご確認ください。
