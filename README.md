@@ -99,8 +99,7 @@ cd aiwolf-nlp-agent
 cp config/config.yml.example config/config.yml
 python -m venv .venv
 source .venv/bin/activate
-pip install .
-pip uninstall aiwolf-nlp-agent
+pip install -e .
 ```
 
 > [!NOTE]
