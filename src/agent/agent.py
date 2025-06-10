@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import random
 from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING
@@ -47,11 +46,9 @@ class Agent:
         self.info: Info | None = None
         self.setting: Setting | None = None
         self.talk_history: list[Talk] = []
-        self.whisper_history: list[Talk] = []
         self.role = role
 
         self.sent_talk_count: int = 0
-        self.sent_whisper_count: int = 0
         self.llm_model: BaseChatModel | None = None
         self.llm_message_history: list[BaseMessage] = []
 
@@ -137,7 +134,6 @@ class Agent:
             "whisper_history": self.whisper_history,
             "role": self.role,
             "sent_talk_count": self.sent_talk_count,
-            "sent_whisper_count": self.sent_whisper_count,
         }
         template: Template = Template(prompt)
         prompt = template.render(**key).strip()
@@ -198,12 +194,6 @@ class Agent:
         """昼開始リクエストに対する処理を行う."""
         self._send_message_to_llm(self.request)
 
-    def whisper(self) -> str:
-        """囁きリクエストに対する応答を返す."""
-        response = self._send_message_to_llm(self.request)
-        self.sent_whisper_count = len(self.whisper_history)
-        return response or ""
-
     def talk(self) -> str:
         """トークリクエストに対する応答を返す."""
         response = self._send_message_to_llm(self.request)
@@ -214,51 +204,17 @@ class Agent:
         """昼終了リクエストに対する処理を行う."""
         self._send_message_to_llm(self.request)
 
-    def divine(self) -> str:
-        """占いリクエストに対する応答を返す."""
-        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
-            self.get_alive_agents(),
-        )
-
-    def guard(self) -> str:
-        """護衛リクエストに対する応答を返す."""
-        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
-            self.get_alive_agents(),
-        )
-
-    def vote(self) -> str:
-        """投票リクエストに対する応答を返す."""
-        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
-            self.get_alive_agents(),
-        )
-
-    def attack(self) -> str:
-        """襲撃リクエストに対する応答を返す."""
-        return self._send_message_to_llm(self.request) or random.choice(  # noqa: S311
-            self.get_alive_agents(),
-        )
-
     def finish(self) -> None:
         """ゲーム終了リクエストに対する処理を行う."""
 
     @timeout
-    def action(self) -> str | None:  # noqa: C901, PLR0911
+    def action(self) -> str | None:
         """リクエストの種類に応じたアクションを実行する."""
         match self.request:
             case Request.NAME:
                 return self.name()
             case Request.TALK:
                 return self.talk()
-            case Request.WHISPER:
-                return self.whisper()
-            case Request.VOTE:
-                return self.vote()
-            case Request.DIVINE:
-                return self.divine()
-            case Request.GUARD:
-                return self.guard()
-            case Request.ATTACK:
-                return self.attack()
             case Request.INITIALIZE:
                 self.initialize()
             case Request.DAILY_INITIALIZE:
