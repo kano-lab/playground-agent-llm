@@ -39,10 +39,13 @@ class AgentLogger:
         if bool(self.config["log"]["file_output"]):
             ulid: ULID = ULID.from_str(game_id)
             tz = datetime.now(UTC).astimezone().tzinfo
-            output_dir = Path(
-                str(self.config["log"]["output_dir"]),
-            ) / datetime.fromtimestamp(ulid.timestamp, tz=tz).strftime(
-                "%Y%m%d%H%M%S%f",
+            output_dir = (
+                Path(
+                    str(self.config["log"]["output_dir"]),
+                )
+                / datetime.fromtimestamp(ulid.timestamp, tz=tz).strftime(
+                    "%Y%m%d%H%M%S%f",
+                )[:-3]
             )
             output_dir.mkdir(
                 parents=True,
