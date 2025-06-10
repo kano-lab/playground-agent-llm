@@ -83,8 +83,6 @@ def connect(config: dict, idx: int = 1) -> None:
     """エージェントを起動する."""
     name = str(config["agent"]["team"]) + str(idx)
     while True:
-        client = create_client(config)
-        connect_to_server(client, name)
         try:
             client = create_client(config)
             connect_to_server(client, name)
