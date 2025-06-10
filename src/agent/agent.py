@@ -105,8 +105,6 @@ class Agent:
             self.setting = packet.setting
         if packet.talk_history:
             self.talk_history.extend(packet.talk_history)
-        if packet.whisper_history:
-            self.whisper_history.extend(packet.whisper_history)
         if self.request == Request.INITIALIZE:
             self.talk_history: list[Talk] = []
             self.whisper_history: list[Talk] = []

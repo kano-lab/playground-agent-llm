@@ -1,6 +1,6 @@
-# aiwolf-nlp-agent-llm
+# playground-agent-llm
 
-人狼知能コンテスト（自然言語部門） のLLMを用いたサンプルエージェントです。
+複数エージェント対話のLLMを用いたサンプルエージェントです。
 
 ## 環境構築
 
@@ -8,8 +8,8 @@
 > Python 3.11以上が必要です。
 
 ```bash
-git clone https://github.com/aiwolfdial/aiwolf-nlp-agent-llm.git
-cd aiwolf-nlp-agent-llm
+git clone https://github.com/nharu-0630/playground-agent-llm.git
+cd playground-agent-llm
 cp config/config.yml.example config/config.yml
 cp config/.env.example config/.env
 python -m venv .venv
