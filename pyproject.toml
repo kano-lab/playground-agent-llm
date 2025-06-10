@@ -1,7 +1,7 @@
 [project]
-name = "aiwolf-nlp-agent-llm"
+name = "playground-agent-llm"
 version = "0.3.4"
-description = "aiwolf-nlp-agent-llm"
+description = "playground-agent-llm"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
 readme = "README.md"
