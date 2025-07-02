@@ -1,12 +1,14 @@
 """設定に応じたエージェントを起動するスクリプト."""
 
+import argparse
+import glob
 import logging
 import multiprocessing
 from pathlib import Path
 
 import yaml
 
-import starter
+from starter import connect
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -16,26 +18,53 @@ formatter = logging.Formatter(
 )
 console_handler.setFormatter(formatter)
 
-if __name__ == "__main__":
-    multiprocessing.set_start_method("spawn")
 
-    config_path = "./config/config.yml"
-    with Path.open(Path(config_path)) as f:
+def execute(config_path: Path) -> None:
+    """設定ファイルをもとに実行する."""
+    with Path.open(config_path) as f:
         config = yaml.safe_load(f)
         logger.info("設定ファイルを読み込みました")
 
     agent_num = int(config["agent"]["num"])
     logger.info("エージェント数を %d に設定しました", agent_num)
     if agent_num == 1:
-        starter.connect(config)
+        connect(config)
     else:
-        threads = []
+        threads: list[multiprocessing.Process] = []
         for i in range(agent_num):
             thread = multiprocessing.Process(
-                target=starter.connect,
+                target=connect,
                 args=(config, i + 1),
             )
             threads.append(thread)
             thread.start()
         for thread in threads:
             thread.join()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        nargs="+",
+        default=["./config/config.yml"],
+        help="設定ファイルのパス (複数指定可)",
+    )
+    args = parser.parse_args()
+
+    multiprocessing.set_start_method("spawn")
+
+    threads: list[multiprocessing.Process] = []
+    for config_path in args.config:
+        glob_path = Path(config_path)
+        for path in Path.glob(glob_path.parent, glob_path.name):
+            thread = multiprocessing.Process(
+                target=execute,
+                args=(Path(path),),
+            )
+            threads.append(thread)
+            thread.start()
+    for thread in threads:
+        thread.join()
