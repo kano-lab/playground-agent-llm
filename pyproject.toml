@@ -25,3 +25,6 @@ keywords = ["aiwolf"]
 
 [project.urls]
 Homepage = "https://aiwolfdial.github.io/aiwolf-nlp/"
+
+[dependency-groups]
+dev = ["ruff>=0.12.1"]
