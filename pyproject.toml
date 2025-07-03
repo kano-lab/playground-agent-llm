@@ -27,4 +27,15 @@ keywords = ["aiwolf"]
 Homepage = "https://aiwolfdial.github.io/aiwolf-nlp/"
 
 [dependency-groups]
-dev = ["ruff>=0.12.1"]
+lint = ["ruff>=0.12.1"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+unfixable = ["F401", "F841"]
+pydocstyle.convention = "google"

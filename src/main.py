@@ -1,7 +1,6 @@
 """設定に応じたエージェントを起動するスクリプト."""
 
 import argparse
-import glob
 import logging
 import multiprocessing
 from pathlib import Path
@@ -27,19 +26,16 @@ def execute(config_path: Path) -> None:
 
     agent_num = int(config["agent"]["num"])
     logger.info("エージェント数を %d に設定しました", agent_num)
-    if agent_num == 1:
-        connect(config)
-    else:
-        threads: list[multiprocessing.Process] = []
-        for i in range(agent_num):
-            thread = multiprocessing.Process(
-                target=connect,
-                args=(config, i + 1),
-            )
-            threads.append(thread)
-            thread.start()
-        for thread in threads:
-            thread.join()
+    threads: list[multiprocessing.Process] = []
+    for i in range(agent_num):
+        thread = multiprocessing.Process(
+            target=connect,
+            args=(config, i + 1),
+        )
+        threads.append(thread)
+        thread.start()
+    for thread in threads:
+        thread.join()
 
 
 if __name__ == "__main__":
@@ -55,7 +51,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     multiprocessing.set_start_method("spawn")
-
     threads: list[multiprocessing.Process] = []
     for config_path in args.config:
         glob_path = Path(config_path)

@@ -15,7 +15,7 @@ class Werewolf(Agent):
         config: dict,
         name: str,
         game_id: str,
-        role: Role,  # noqa: ARG002
+        _: Role,
     ) -> None:
         """人狼のエージェントを初期化する."""
         super().__init__(config, name, game_id, Role.WEREWOLF)

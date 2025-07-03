@@ -29,11 +29,7 @@ def create_client(config: dict) -> Client:
     """クライアントの作成."""
     return Client(
         url=str(config["web_socket"]["url"]),
-        token=(
-            str(config["web_socket"]["token"])
-            if config["web_socket"]["token"]
-            else None
-        ),
+        token=(str(config["web_socket"]["token"]) if config["web_socket"]["token"] else None),
     )
 
 

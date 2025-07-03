@@ -15,7 +15,7 @@ class Possessed(Agent):
         config: dict,
         name: str,
         game_id: str,
-        role: Role,  # noqa: ARG002
+        _: Role,
     ) -> None:
         """狂人のエージェントを初期化する."""
         super().__init__(config, name, game_id, Role.POSSESSED)
