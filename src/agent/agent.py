@@ -59,11 +59,7 @@ class Agent:
 
             thread = StoppableThread(target=execute_with_timeout)
             thread.start()
-            timeout_value = (
-                self.setting.timeout.action
-                if hasattr(self, "setting") and self.setting
-                else 0
-            ) // 1000
+            timeout_value = (self.setting.timeout.action if hasattr(self, "setting") and self.setting else 0) // 1000
             if timeout_value > 0:
                 thread.join(timeout=timeout_value)
                 if thread.is_alive():
@@ -173,4 +169,6 @@ class Agent:
                 self.daily_finish()
             case Request.FINISH:
                 self.finish()
+            case _:
+                pass
         return None

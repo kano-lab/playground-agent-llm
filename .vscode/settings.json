@@ -4,6 +4,7 @@
         "aiwolfdial",
         "nwatanabe",
         "pydocstyle",
+        "pyright",
         "pyyaml",
         "ysahashi"
     ]
