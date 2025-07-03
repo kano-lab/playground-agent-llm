@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from aiwolf_nlp_common.packet import Role
 
 from agent.agent import Agent
@@ -12,7 +14,7 @@ class Bodyguard(Agent):
 
     def __init__(
         self,
-        config: dict,
+        config: dict[str, Any],
         name: str,
         game_id: str,
         role: Role,  # noqa: ARG002

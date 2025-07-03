@@ -1,5 +1,7 @@
 """エージェント関連のユーティリティ関数を提供するモジュール."""
 
+from typing import Any
+
 from aiwolf_nlp_common.packet import Packet, Role
 
 from agent.agent import Agent
@@ -22,7 +24,7 @@ ROLE_TO_AGENT_CLS: dict[Role, type[Agent]] = {
 
 @staticmethod
 def init_agent_from_packet(
-    config: dict,
+    config: dict[str, Any],
     name: str,
     packet: Packet,
 ) -> Agent:

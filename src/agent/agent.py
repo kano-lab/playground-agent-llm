@@ -6,11 +6,12 @@ import os
 import random
 from pathlib import Path
 from time import sleep
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar
 
 from dotenv import load_dotenv
 from jinja2 import Template
 from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
@@ -28,13 +29,16 @@ from utils.stoppable_thread import StoppableThread
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+P = ParamSpec("P")
+T = TypeVar("T")
+
 
 class Agent:
     """エージェントの基底クラス."""
 
     def __init__(
         self,
-        config: dict,
+        config: dict[str, Any],
         name: str,
         game_id: str,
         role: Role,
@@ -58,26 +62,25 @@ class Agent:
         load_dotenv(Path(__file__).parent.joinpath("./../../config/.env"))
 
     @staticmethod
-    def timeout(func: Callable) -> Callable:
+    def timeout(func: Callable[P, T]) -> Callable[P, T]:
         """アクションタイムアウトを設定するデコレータ."""
 
-        def _wrapper(self, *args, **kwargs) -> str:  # noqa: ANN001, ANN002, ANN003
-            res = ""
+        def _wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+            res: T | Exception = Exception("No result")
 
             def execute_with_timeout() -> None:
                 nonlocal res
                 try:
-                    res = func(self, *args, **kwargs)
+                    res = func(*args, **kwargs)
                 except Exception as e:  # noqa: BLE001
                     res = e
 
             thread = StoppableThread(target=execute_with_timeout)
             thread.start()
-            timeout_value = (
-                self.setting.timeout.action
-                if hasattr(self, "setting") and self.setting
-                else 0
-            ) // 1000
+            self = args[0] if args else None
+            if not isinstance(self, Agent):
+                raise TypeError(self, " is not an Agent instance")
+            timeout_value = (self.setting.timeout.action if hasattr(self, "setting") and self.setting else 0) // 1000
             if timeout_value > 0:
                 thread.join(timeout=timeout_value)
                 if thread.is_alive():
@@ -93,7 +96,7 @@ class Agent:
                         )
             else:
                 thread.join()
-            if isinstance(res, Exception):
+            if isinstance(res, Exception):  # type: ignore[arg-type]
                 raise res
             return res
 
@@ -146,19 +149,14 @@ class Agent:
             return None
         try:
             self.llm_message_history.append(HumanMessage(content=prompt))
-            response = self.llm_model.invoke(self.llm_message_history)
-            response_content = (
-                response.content
-                if isinstance(response.content, str)
-                else str(response.content[0])
-            )
-            self.llm_message_history.append(AIMessage(content=response_content))
-            self.agent_logger.logger.info(["LLM", prompt, response_content])
+            response = (self.llm_model | StrOutputParser()).invoke(self.llm_message_history)
+            self.llm_message_history.append(AIMessage(content=response))
+            self.agent_logger.logger.info(["LLM", prompt, response])
         except Exception:
             self.agent_logger.logger.exception("Failed to send message to LLM")
             return None
         else:
-            return response_content
+            return response
 
     @timeout
     def name(self) -> str:
@@ -167,7 +165,7 @@ class Agent:
 
     def initialize(self) -> None:
         """ゲーム開始リクエストに対する初期化処理を行う."""
-        if self.config is None or self.info is None:
+        if self.info is None:
             return
 
         model_type = str(self.config["llm"]["type"])
@@ -192,6 +190,7 @@ class Agent:
                 )
             case _:
                 raise ValueError(model_type, "Unknown LLM type")
+        self.llm_model = self.llm_model
         self._send_message_to_llm(self.request)
 
     def daily_initialize(self) -> None:
@@ -267,4 +266,6 @@ class Agent:
                 self.daily_finish()
             case Request.FINISH:
                 self.finish()
+            case _:
+                pass
         return None
