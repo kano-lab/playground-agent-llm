@@ -7,9 +7,9 @@ import threading
 class StoppableThread(threading.Thread):
     """スレッドを停止できるようにするためのクラス."""
 
-    def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
+    def __init__(self, *args, **kwargs) -> None:  # type: ignore[arg-type]  # noqa: ANN002, ANN003
         """スレッドを停止できるようにするためのクラス."""
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)  # type: ignore[arg-type]
         self._stop_event = threading.Event()
 
     def stop(self) -> None:

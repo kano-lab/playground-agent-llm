@@ -1,5 +1,7 @@
 """エージェント関連のユーティリティ関数を提供するモジュール."""
 
+from typing import Any
+
 from aiwolf_nlp_common.packet import Packet
 
 from agent.agent import Agent
@@ -7,7 +9,7 @@ from agent.agent import Agent
 
 @staticmethod
 def init_agent_from_packet(
-    config: dict,
+    config: dict[str, Any],
     name: str,
     packet: Packet,
 ) -> Agent:

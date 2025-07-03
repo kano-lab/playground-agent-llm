@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ulid import ULID
 
@@ -18,7 +18,7 @@ class AgentLogger:
 
     def __init__(
         self,
-        config: dict,
+        config: dict[str, Any],
         name: str,
         game_id: str,
     ) -> None:
