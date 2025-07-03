@@ -4,6 +4,7 @@
         "aiwolfdial",
         "levelname",
         "nwatanabe",
+        "pycache",
         "pydocstyle",
         "pyright",
         "pythonapi",
