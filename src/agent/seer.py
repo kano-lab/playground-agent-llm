@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from aiwolf_nlp_common.packet import Role
 
 from agent.agent import Agent
@@ -12,10 +14,10 @@ class Seer(Agent):
 
     def __init__(
         self,
-        config: dict,
+        config: dict[str, Any],
         name: str,
         game_id: str,
-        _: Role,
+        role: Role,  # noqa: ARG002
     ) -> None:
         """占い師のエージェントを初期化する."""
         super().__init__(config, name, game_id, Role.SEER)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from utils.agent_utils import init_agent_from_packet
 
@@ -25,7 +25,7 @@ console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
 
-def create_client(config: dict) -> Client:
+def create_client(config: dict[str, Any]) -> Client:
     """クライアントの作成."""
     return Client(
         url=str(config["web_socket"]["url"]),
@@ -52,7 +52,7 @@ def connect_to_server(client: Client, name: str) -> None:
 
 def handle_game_session(
     client: Client,
-    config: dict,
+    config: dict[str, Any],
     name: str,
 ) -> None:
     """ゲームセッションの処理."""
@@ -75,7 +75,7 @@ def handle_game_session(
             break
 
 
-def connect(config: dict, idx: int = 1) -> None:
+def connect(config: dict[str, Any], idx: int = 1) -> None:
     """エージェントを起動する."""
     name = str(config["agent"]["team"]) + str(idx)
     while True:

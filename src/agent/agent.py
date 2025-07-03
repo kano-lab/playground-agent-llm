@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar
 
 from aiwolf_nlp_common.packet import Info, Packet, Request, Role, Setting, Status, Talk
 
@@ -14,13 +14,16 @@ from utils.stoppable_thread import StoppableThread
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+P = ParamSpec("P")
+T = TypeVar("T")
+
 
 class Agent:
     """エージェントの基底クラス."""
 
     def __init__(
         self,
-        config: dict,
+        config: dict[str, Any],
         name: str,
         game_id: str,
         role: Role,
@@ -44,21 +47,24 @@ class Agent:
             self.comments = f.read().splitlines()
 
     @staticmethod
-    def timeout(func: Callable) -> Callable:
+    def timeout(func: Callable[P, T]) -> Callable[P, T]:
         """アクションタイムアウトを設定するデコレータ."""
 
-        def _wrapper(self, *args, **kwargs) -> str:  # noqa: ANN001, ANN002, ANN003
-            res = ""
+        def _wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+            res: T | Exception = Exception("No result")
 
             def execute_with_timeout() -> None:
                 nonlocal res
                 try:
-                    res = func(self, *args, **kwargs)
+                    res = func(*args, **kwargs)
                 except Exception as e:  # noqa: BLE001
                     res = e
 
             thread = StoppableThread(target=execute_with_timeout)
             thread.start()
+            self = args[0] if args else None
+            if not isinstance(self, Agent):
+                raise TypeError(self, " is not an Agent instance")
             timeout_value = (self.setting.timeout.action if hasattr(self, "setting") and self.setting else 0) // 1000
             if timeout_value > 0:
                 thread.join(timeout=timeout_value)
@@ -75,7 +81,7 @@ class Agent:
                         )
             else:
                 thread.join()
-            if isinstance(res, Exception):
+            if isinstance(res, Exception):  # type: ignore[arg-type]
                 raise res
             return res
 
