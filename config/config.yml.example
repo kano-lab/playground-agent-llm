@@ -51,6 +51,10 @@ prompt:
     {{ w.agent }}: {{ w.text }}
     {% endfor %}
   daily_finish: |-
+    履歴:
+    {% for w in talk_history[sent_talk_count:] -%}
+    {{ w.agent }}: {{ w.text }}
+    {% endfor %}
     昼終了リクエスト
     {{ info.day }}日目
 
